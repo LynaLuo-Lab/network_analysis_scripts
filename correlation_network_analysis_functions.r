@@ -12,6 +12,82 @@ require(igraph)
 require(SDMTools)
 
 ######################################DATA LOADING UTILITIES ######################################
+#Individual data loading routines
+#Ex use: 
+# #Assumes you have the following in the directory path stored in variable 'dataFileDirectory'
+# # 1) a carma matrix file 'contact.contact'
+# # 2) a resinfo.cpptraj.dat file created using the 'resinfo' command in cpptraj
+# # 3) a carma.average.dat file
+# carmaData <- loard_carma_correlation_matrix(paste(dataFileDirectory,"contact.contact",sep="/"))
+# resData <- load_system_info_data(dataFileDirectory)
+# contactData <- apply_resData_to_carma_data(carmaData,resData)
+load_carma_correlation_matrix <- function(datafilepath,has_carma_header=TRUE,
+											indexNames=c("X","Y"),valuename="CORR",
+											nnodes=NA) {
+		#loads a single carma matrix as a dataframe
+		#default frame will have colums 'X', 'Y', and 'CORR'
+		if(has_carma_header==TRUE) { #skips first line, needed for most carma output files
+			tempdatascan=scan(datafilepath,skip=1)
+		} else {
+			tempdatascan=scan(datafilepath)
+		}
+        if(is.na(nnodes)){ #guess dimensions from number of entries in matrix file
+			datdims=c(sqrt(length(tempdatascan)),sqrt(length(tempdatascan)))
+		} else { #explicitly set dimensions
+			datadims=c(nnodes,nnodes)
+		}
+        tempdatarray<-array(tempdatascan,dim=datdims)
+        tempdat <- tempdatarray %>% 
+			melt(varames = c("X","Y"),value.name=valuename) %>% as.data.frame()
+		tempdat[[indexNames[1]]]=tempdat[[colnames(tempdat)[1]]]
+		tempdat[[indexNames[2]]]=tempdat[[colnames(tempdat)[2]]]
+		tempdat<-tempdat %>% dplyr::select(4,5,3)
+       	return(tempdat) 
+}
+load_system_info_data <- function(baseinfodir,
+									resinfodir=baseinfodir,
+									coordinfodir=baseinfodir,
+									resinfofilename="resinfo.cpptraj.dat",
+									coordfilename="carma.average.pdb") {
+	#loads topology information from cpptraj atominof and resinfo
+	#and structural information from carma pdb files into a data frame
+	#defaults here assume all files are under the specified base directory (baseinfodir)
+	resinfofile=paste(resinfodir,resinfofilename,sep="/")
+	coordfile=paste(coordinfodir,coordfilename,sep="/")
+
+	tempResDat=read.table(resinfofile,header=TRUE)
+
+    tempResDat <- tempResDat %>% 
+      mutate(Residue=paste(RESNAME,RESID,sep="_"))
+    tempCoordDat <- read.table(coordfile,
+                               col.names=c("Unused1","ResNum",
+                                           "Unused2","RESNAME",
+                                           "Chain","RESID",
+                                           "rX","rY","rZ",
+                                           "OCCUPANCY","BETA"),
+                               fill = TRUE) %>% filter(Unused1 != "END")
+    tempResDat <- left_join(tempResDat,
+                            tempCoordDat %>% dplyr::select(ResNum,rX,rY,rZ),
+                            by=c("ResNum"))
+
+    resData <- tempResDat %>% 
+                       dplyr::select(ResNum,RESID,RESNAME,Residue,rX,rY,rZ)
+	return(resData)
+}
+apply_resData_to_carma_data <- function(carmadata,resdata,separator="_") {
+	resInfoTypes=colnames(resdata)
+	resInfoTypes=resInfoTypes[c(2:length(resInfoTypes))]
+	carma_X_Name=colnames(carmadata[1])
+	carma_Y_Name=colnames(carmadata[2])
+	for(resInfoType in resInfoTypes) {
+		X_InfoName=paste(carma_X_Name,resInfoType,sep=separator)
+		Y_InfoName=paste(carma_Y_Name,resInfoType,sep=separator)
+		carmadata[[X_InfoName]]=resdata[[resInfoType]][carmadata[[carma_X_Name]]]
+		carmadata[[Y_InfoName]]=resdata[[resInfoType]][carmadata[[carma_Y_Name]]]
+	}
+	return(carmadata)
+}
+#Automated loading scripts to load data over an organized set of systems and windows
 #SETUP information
 #Directory structure diagram:
 # -basedirectory-
@@ -43,6 +119,7 @@ load_windowed_correlation_data <- function(basepath,baseinfodir=basepath,
                                            atominfofilename="atominfo.cpptraj.dat",
                                            coordfilename="carma.average.pdb",
                                            system_list,window_list,
+										   skip_corr_header_rows=0,skip_contact_header_rows=1,
                                            datafiles_as_arrays=FALSE,
                                            contactfiles_as_arrays=FALSE,
                                            verbose=TRUE) {
@@ -103,24 +180,28 @@ load_windowed_correlation_data <- function(basepath,baseinfodir=basepath,
       #filter
       contactpath=paste(basepath,"/",system,"/window_",window,"/",contactmapname,sep="")
       if (datafiles_as_arrays) {
-        tempdatscan=scan(datafilepath)
-        datdims=c(sqrt(length(tempdatascan)),sqrt(length(tempdatascan)))
-        tempdatarray<-array(tempdatscan,dim=datdims)
-        tempdat <- temparray %>% melt(varames = c("X","Y"),value.name="CORR")
-        rm(tempdatscan)
-        rm(datdims)
-        rm(tmpdatarray)
+        #tempdatscan=scan(datafilepath,skip=skip_corr_header_rows)
+        #datdims=c(sqrt(length(tempdatscan)),sqrt(length(tempdatscan)))
+        #tempdatarray<-array(tempdatscan,dim=datdims)
+        #tempdat <- tempdatarray %>% melt(varames = c("X","Y"),value.name="CORR")
+        #rm(tempdatscan)
+        #rm(datdims)
+        #rm(tmpdatarray)
+		tempdat <- load_carma_correlation_matrix(datafilepath,has_carma_header=(skip_corr_header_rows > 0),
+											indexNames=c("X","Y"),valuename="CORR")
       } else {
         tempdat=read.table(datafilepath,header = TRUE)
       }
       if (contactfiles_as_arrays) {
-        tempcontactscan=scan(contactpath,skip=1)
-        contactdims=c(sqrt(length(tempcontactscan)),sqrt(length(tempcontactscan)))
-        tempcontactarray<-array(tempcontactscan,dim=contactdims)
-        tempcontact<-tempcontactarray %>% melt(varnames=c("X","Y"),value.name="CORR")
-        rm(tempcontactscan)
-        rm(contactdims)
-        rm(tempcontactarray)
+        #tempcontactscan=scan(contactpath,skip=skip_contact_header_rows)
+        #contactdims=c(sqrt(length(tempcontactscan)),sqrt(length(tempcontactscan)))
+        #tempcontactarray<-array(tempcontactscan,dim=contactdims)
+        #tempcontact<-tempcontactarray %>% melt(varnames=c("X","Y"),value.name="CONTACT")
+        #rm(tempcontactscan)
+        #rm(contactdims)
+        #rm(tempcontactarray)
+		tempcontact <- load_carma_correlation_matrix(datafilepath,has_carma_header=(skip_contact_header_rows > 0),
+											indexNames=c("X","Y"),valuename="CONTACT")
       } else {
         tempcontact=read.table(contactpath,header = TRUE)
       }
@@ -171,7 +252,8 @@ load_windowed_correlation_data <- function(basepath,baseinfodir=basepath,
 
 #merge windowed correlation data and windowed contact data
 gen_contact_corr_summary <- function(windowed_corr_data,windowed_contact_data,
-                                     verbose=FALSE) {
+                                     verbose=FALSE,vlevel=1,
+									 calc_pvals=FALSE,use_abs_corr=FALSE) {
   if (verbose) {print("melting windowed_corr_data");flush.console()}
   melted_windowed_corr <- melt(windowed_corr_data,
                                id.vars=c("SYSTEM","WINDOW","X","Y",
@@ -190,6 +272,7 @@ gen_contact_corr_summary <- function(windowed_corr_data,windowed_contact_data,
                                   value.name="value")
   if (verbose) {print("joining melted data");flush.console()}
   melted_windowed_contact_corr <- rbind(melted_windowed_corr,melted_windowed_contact)
+  if(verbose && vlevel>1){melted_windowed_contact %>% glimpse;flush.console()}
   rm(melted_windowed_corr)
   rm(melted_windowed_contact)
   if (verbose) {print("re-spreading melted data");flush.console()}
@@ -197,15 +280,37 @@ gen_contact_corr_summary <- function(windowed_corr_data,windowed_contact_data,
     tidyr::spread(key=measurement,value=value,fill=0.0)
   rm(melted_windowed_contact_corr)
   if (verbose) {print("computing windowed_data summary");flush.console()}
-  contact_corr_summary <- windowed_contact_corr %>%
-    group_by(SYSTEM,X,Y,X_RES,Y_RES,X_RESNAME,Y_RESNAME,X_Residue,Y_Residue) %>%
-    summarise(CORR_CONTACT_sum=sum(CORR*CONTACT),
-              CONTACT_sum=sum(CONTACT),
-              CONTACT=mean(CONTACT)) %>%
-    filter(CONTACT>0) %>% mutate(CORR=CORR_CONTACT_sum/CONTACT_sum) %>%
-    dplyr::select(SYSTEM,X,Y,X_RES,Y_RES,X_RESNAME,Y_RESNAME,X_Residue,Y_Residue,
-                  CONTACT,CORR) %>%
-    as.data.frame()
+  if (use_abs_corr) {
+    windowed_contact_corr <- windowed_contact_corr %>%
+	  mutate(CORR = abs(CORR))
+  }
+  if (!calc_pvals) {
+    contact_corr_summary <- windowed_contact_corr %>%
+      group_by(SYSTEM,X,Y,X_RES,Y_RES,X_RESNAME,Y_RESNAME,X_Residue,Y_Residue) %>%
+      summarise(CORR_CONTACT_sum=sum(CORR*CONTACT),
+                CONTACT_sum=sum(CONTACT),
+				CONTACT_stdev=sd(CONTACT),
+                CONTACT=mean(CONTACT)) %>%
+      filter(CONTACT>0) %>% mutate(CORR=CORR_CONTACT_sum/CONTACT_sum) %>%
+      dplyr::select(SYSTEM,X,Y,X_RES,Y_RES,X_RESNAME,Y_RESNAME,X_Residue,Y_Residue,
+                    CONTACT,CORR,CONTACT_stdev) %>%
+      as.data.frame()
+  } else {
+    contact_corr_summary <- windowed_contact_corr %>%
+      group_by(SYSTEM,X,Y,X_RES,Y_RES,X_RESNAME,Y_RESNAME,X_Residue,Y_Residue) %>%
+      summarise(CORR_CONTACT_sum=sum(CORR*CONTACT),
+                CONTACT_sum=sum(CONTACT),
+				CORR_pValue=t.test(CONTACT*CORR)$p.value,
+				CONTACT_stdev=sd(CONTACT),
+                CONTACT=mean(CONTACT)
+			   ) %>%
+      filter(CONTACT>0) %>% mutate(CORR=CORR_CONTACT_sum/CONTACT_sum) %>%
+      dplyr::select(SYSTEM,X,Y,X_RES,Y_RES,X_RESNAME,Y_RESNAME,X_Residue,Y_Residue,
+                    CONTACT,CORR,
+					CONTACT_stdev,
+					CORR_pValue) %>%
+      as.data.frame()
+  }
   return(contact_corr_summary)
 }
 
@@ -321,6 +426,763 @@ load_corr_flow_btw_tables <- function(basepath,baseinfodir=basepath,
   }
   if(verbose){print("Done!");flush.console()}
   return(dataList)
+}
+
+#convenience functions for use in forcing matrix symmetry
+mergeWhichNonZeroAbsMin=function(x,y){
+	#this function has a somewhat more complicated structure
+	#since it will most likely be used to write weight matrices
+	#which use 0 to indicate the absence of an edge, but otherwise
+	#use the inverse log of a corresponding value.
+	#E.g. low values result in very high weights and vice-versa
+	#Thus if both entires are zero should be used if both
+	#entries are non-finite. This is useful since Inf, or NA
+	#may be commone if -log() is applied to an entry where the
+	#the value was zero. In that case, we probably want to turn
+	#the edge off.
+	if((is.finite(x) & is.finite(y))){
+		if((abs(x)>0) & (abs(y)>0)) {
+			return(c(x,y)[which.min(abs(c(x,y)))])
+		} else {
+			if(abs(x)>0) {
+				return(x)
+			} else if (abs(y) > 0) {
+				return(y)
+			} else {
+				return(0)
+			}
+		}
+	} else {
+		if(is.finite(x)) {
+			return(x)
+		} else if(is.finite(y)) {
+			return(y)
+		} else {
+			return(0)	
+		}
+	}
+}
+mergeWhichAbsMax=function(x,y){
+    return(c(x,y)[which.max(abs(c(x,y)))])
+}
+mergeWhichAbsMin=function(x,y){
+    return(c(x,y)[which.min(abs(c(x,y)))])
+}
+mergeAbsMax=function(x,y){
+    return(max(abs(c(x,y))))
+}
+mergeAbsMin=function(x,y){
+    return(min(abs(c(x,y))))
+}
+mergeMax=function(x,y){
+    return(max(c(x,y)))
+}
+mergeMin=function(x,y){
+    return(min(c(x,y)))
+}
+mergeMean=function(x,y){
+    return(mean(c(x,y)))
+}
+mergeAbsMean=function(x,y){
+	return(mean(abs(c(x,y))))
+}
+
+makeSymmetric=function(mat,mergeFun=mergeWhichAbsMax){
+    tmat=t(mat)
+    outMat=(mat+tmat)*0
+    dimlim=min(dim(mat))
+    for(ii in c(1:(dimlim-1))){
+        for(jj in c(ii:dimlim)){
+            val=mergeFun(mat[ii,jj],mat[jj,ii])
+            outMat[ii,jj]=val
+            outMat[jj,ii]=val
+        }
+    }
+    return(outMat)
+}
+
+symmetricSparseMatrixFromLists <- function(fromList,toList,valList,n,
+									 mergeFunction=mergeWhichAbsMax) {
+	tempMat=sparseMatrix(i=fromList,j=toList,x=valList,dims=c(n,n))
+	outMat=tempMat+t(tempMat)
+	for(iInd in 1:length(fromList)){
+		ii=fromList[iInd]
+		jj=toList[iInd]
+		val=mergeFunction(tempMat[ii,jj],tempMat[jj,ii])
+		outMat[ii,jj]=val
+		outMat[jj,ii]=val
+	}
+	return(outMat)
+}
+
+write_networkView_matrix <- function(outputFileName="data.dat",
+                                     header="((protein) and (not hydrogen)) and ((name CA) )",
+                                     fromList,toList,valList,
+                                     nodeCount=length(unique(c(fromList,toList))),
+                                     makeSymmetric=FALSE,
+									 mergeFunction=mergeWhichAbsMax,
+									 verbose=FALSE){
+  if(makeSymmetric) {
+	tempMat=symmetricSparseMatrixFromLists(fromList,toList,valList,nodeCount,mergeFunction)
+  } else {
+	tempMat=sparseMatrix(i=fromList,j=toList,x=valList,dims=c(nodeCount,nodeCount))
+  }
+    if(verbose) {
+	toColumn=toList
+	fromColumn=fromList
+	valColumn=valList
+  } 
+
+  if(verbose) {
+	message("-NetworkView Matrix Data Summary-")
+	message("")
+	message(" Input: Min 1stQt. Median Mean 3rdQt. Max")
+	message(" toColumn: ",(toColumn) %>% summary %>% paste(collapse=" "))
+	message(" fromColumn: ",(fromColumn) %>% summary %>% paste(collapse=" "))
+	message(" valColumn: ",(valColumn) %>% summary %>% paste(collapse=" "))
+	message("")
+	message(" Output: Min 1stQt. Median Mean 3rdQt. Max")
+	message(" toColumn: ",(tempMat %>% summary)[["i"]] %>% summary %>% paste(collapse=" "))
+	message(" fromColumn: ",(tempMat %>% summary)[["j"]] %>% summary %>% paste(collapse=" "))
+	message(" valColumn: ",(tempMat %>% summary)[["x"]] %>% summary %>% paste(collapse=" "))
+	message("")
+	message("-",rep("#",31)%>%paste(collapse=""),"-")
+  }
+
+  tempMat=tempMat%>%as.matrix()
+  outFile=file(outputFileName,"w")
+  cat(header,file=outFile)
+  cat("\n",file=outFile)
+  for (iRow in c(1:nrow(tempMat))){
+    for (iCol in c(1:ncol(tempMat))){
+      if(abs(tempMat[iRow,iCol]) >= 1E-7) {
+        cat(sprintf("%9.5f ",tempMat[iRow,iCol]),file=outFile)
+      } else {
+        cat("0 ",file=outFile)
+      }
+    }
+    # cat(tempMat[iRow,],file=outFile)
+    cat("\n",file=outFile)
+  }
+  close(outFile)
+}
+write_networkDataTable_to_networkView_matrix <- function(outputFileName="data.dat",
+                                                         header="((protein) and (not hydrogen)) and ((name CA) )",
+                                                         networkData,
+                                                         toColumn="X",fromColumn="Y",
+                                                         valColumn="CORR",
+                                                         nodeCount=0,
+                                                         makeSymmetric=FALSE,mergeFunction=mergeWhichAbsMax,
+														 indexOffset=0,verbose=FALSE) {
+  if(verbose) {
+	message("-NetworkView Matrix Data Table Summary-")
+	message(" Column: Min 1stQt. Median Mean 3rdQt. Max")
+	message(" toColumn: ",(networkData[[toColumn]]-indexOffset) %>% summary %>% paste(collapse=" "))
+	message(" fromColumn: ",(networkData[[fromColumn]]-indexOffset) %>% summary %>% paste(collapse=" "))
+	message(" valColumn: ",(networkData[[valColumn]]) %>% summary %>% paste(collapse=" "))
+	message("-",rep("#",37)%>%paste(collapse=""),"-")
+  }
+  fromInds=networkData[[toColumn]]-indexOffset
+  toInds=networkData[[fromColumn]]-indexOffset
+  xVals=networkData[[valColumn]]
+  if (nodeCount==0) {
+    nodeCount=unique(c(fromInds,toInds))
+  }
+  write_networkView_matrix(outputFileName,header,fromInds,toInds,xVals,nodeCount=nodeCount,
+	makeSymmetric=makeSymmetric,mergeFunction=mergeFunction,verbose=verbose)
+}
+#routines for loading suboptimal path data generated by the VMD NetworkView plugin 'subopt' command
+read_networkView_suboptFile_pathCount <- function(suboptFilePath,verbose=FALSE,verboseLevel=0) {
+	tempFile=file(suboptFilePath,"r")
+	tempLine=readLines(tempFile,n=1)
+	if(length(tempLine)==0) {
+		print("Error: Data file appears to be empty!")
+		close(tempFile)
+		return(0)
+	} else {
+		linenum=1
+		if(verbose && verboseLevel>1){print(paste("- line number",linenum," = ",tempLine))}
+		startLineFound=tempLine %>% grepl("Number of paths is",.)
+		while(!startLineFound) {
+			tempLine=readLines(tempFile,n=1)
+			linenum=linenum+1
+			if(length(tempLine)==0) {
+				if(verbose && verboseLevel>0){print(paste("- line number",linenum,"was empty"))}
+				break
+			} else {
+				if(verbose && verboseLevel>1){print(paste("- line number",linenum," = ",tempLine))}
+			}
+			startLineFound=tempLine%>%grepl("Number of paths is",.)
+		}
+		if(!startLineFound){
+			print("Error: Data file ended prematurely or has wrong format!")
+			close(tempFile)
+			return(0)
+		} else {
+			lineTokens <- (tempLine%>%strsplit(" "))[[1]] %>% as.character
+			pathCount=lineTokens[length(lineTokens)]%>%as.numeric
+			close(tempFile)
+			return(pathCount)
+		}
+	}
+}
+read_networkView_suboptFile_nodeCounts <- function(suboptFilePath,resCount,verbose=FALSE,verboseLevel=1) {
+  tempFile=file(suboptFilePath,"r")
+  tempLine=readLines(tempFile,n=1)
+  tempMat=c(rep(0,resCount))
+  if(length(tempLine)==0){
+    print("Error: Data File appears to be empty!")
+    close(tempFile)
+    return(tempMat)
+  } else {
+    startLineFound=tempLine %>% grepl("The final paths are",.)
+    while(!startLineFound) {
+      tempLine=readLines(tempFile,n=1)
+      if (length(tempLine)==0) {
+        break
+      }
+      startLineFound=tempLine %>% grepl("The final paths",.)
+    }
+    if (!startLineFound) {
+      print("Error: Data File ended prematurely or has wrong format!")
+      close(tempFile)
+      return(tempMat)
+    } else {
+      #print(tempLine)
+      tempLine=readLines(tempFile,n=1)
+      if(length(tempLine)==0) {
+        print("Error: Data File ended prematurely or has wrong format!")
+        close(tempFile)
+        return(tempMat)
+      }
+      endLineFound=tempLine %>% grepl("Number of paths is",.)
+      if (endLineFound){
+        print("Error: Data File ended prematurely or has wrong format!")
+        close(tempFile)
+        return(tempMat)
+      } else {
+        count=1
+        #tempMat=sparseMatrix(i=c(1),j=c(1),x=c(0),dims=c(resCount,resCount))
+        while(!endLineFound) {
+          if(verbose){
+            print(paste("**parsing subopt path",count))
+            if(verboseLevel>1) {
+              print(paste("***line = ",tempLine))
+            }
+          }
+          tempVals=(tempLine%>%strsplit("[ ,()]+"))[[1]] %>% as.numeric()
+          tempVals=tempVals+1
+          if(verbose & verboseLevel > 2) {
+            print(paste("****line tokens = [",
+                        paste(tempVals,collapse = ", "),
+                        "]"))
+          }
+          tempMat[tempVals[1:(length(tempVals)-1)]]=tempMat[tempVals[1:(length(tempVals)-1)]]+1 
+          tempLine=readLines(tempFile,n=1)
+          if (length(tempLine)==0) {
+            break
+          }
+          endLineFound=tempLine %>% grepl("Number of paths is",.)
+          count=count+1
+        }
+      }
+      if (!endLineFound) {
+        print("Error: Data File ended prematurely or has wrong format!")
+        close(tempFile)
+        return(tempMat)
+      } else {
+        close(tempFile)
+        return(tempMat)
+      }
+    }
+  }
+
+}
+read_networkView_suboptFile_to_Matrix <- function(suboptFilePath,resCount,verbose=FALSE,verboseLevel=1) {
+  tempFile=file(suboptFilePath,"r")
+  tempLine=readLines(tempFile,n=1)
+  tempMat=sparseMatrix(i=c(1),j=c(1),x=c(0),dims=c(resCount,resCount))
+  if(length(tempLine)==0){
+    print("Error: Data File appears to be empty!")
+    close(tempFile)
+    return(tempMat)
+  } else {
+    startLineFound=tempLine %>% grepl("The final paths are",.)
+    while(!startLineFound) {
+      tempLine=readLines(tempFile,n=1)
+      if (length(tempLine)==0) {
+        break
+      }
+      startLineFound=tempLine %>% grepl("The final paths",.)
+    }
+    if (!startLineFound) {
+      print("Error: Data File ended prematurely or has wrong format!")
+      close(tempFile)
+      return(tempMat)
+    } else {
+      #print(tempLine)
+      tempLine=readLines(tempFile,n=1)
+      if(length(tempLine)==0) {
+        print("Error: Data File ended prematurely or has wrong format!")
+        close(tempFile)
+        return(tempMat)
+      }
+      endLineFound=tempLine %>% grepl("Number of paths is",.)
+      if (endLineFound){
+        print("Error: Data File ended prematurely or has wrong format!")
+        close(tempFile)
+        return(tempMat)
+      } else {
+        count=1
+        #tempMat=sparseMatrix(i=c(1),j=c(1),x=c(0),dims=c(resCount,resCount))
+        while(!endLineFound) {
+          if(verbose){
+            print(paste("**parsing subopt path",count))
+            if(verboseLevel>1) {
+              print(paste("***line = ",tempLine))
+            }
+          }
+          tempVals=(tempLine%>%strsplit("[ ,()]+"))[[1]] %>% as.numeric()
+          tempVals=tempVals+1
+          if(verbose & verboseLevel > 2) {
+            print(paste("****line tokens = [",
+                        paste(tempVals,collapse = ", "),
+                        "]"))
+          }
+          nVals=length(tempVals)
+          nNodes=nVals-1
+          pathLength=tempVals[nVals]
+          tempPathMat=sparseMatrix(i=tempVals[1:(nNodes-1)]%>%as.numeric(),
+                                   j=tempVals[2:nNodes]%>%as.numeric(),
+                                   x=rep(1,nNodes-1),
+                                   dims=c(resCount,resCount))
+          for(iInd in c(1:(nNodes-1))) { #ensure the matrix is symmetric
+            ii=tempVals[iInd]
+            jj=tempVals[iInd+1]
+            tempPathMat[jj,ii]=1
+            tempPathMat[ii,jj]=1
+          }
+          #tempPathMat=tempPathMat+t(tempPathMat)
+          tempMat=tempMat+tempPathMat
+          tempLine=readLines(tempFile,n=1)
+          if (length(tempLine)==0) {
+            break
+          }
+          endLineFound=tempLine %>% grepl("Number of paths is",.)
+          count=count+1
+        }
+      }
+      if (!endLineFound) {
+        print("Error: Data File ended prematurely or has wrong format!")
+        close(tempFile)
+        return(tempMat)
+      } else {
+        close(tempFile)
+        return(tempMat)
+      }
+    }
+  }
+}
+read_networkView_suboptFile_nodeCounts_to_DataFrame <- function(suboptFilePath,resCount) {
+  tempMat=read_networkView_suboptFile_nodeCounts(suboptFilePath,resCount)
+  if(!is.null(tempMat) && 
+     !is.null(length(tempMat) == 0)) {
+    tempFrame=data.frame(ResNum=c(1:resCount),COUNT=tempMat)
+  } else {
+    tempFrame=data.frame(ResNum=c(),COUNT=c())
+  }
+  return(tempFrame)
+}
+
+read_networkView_suboptFile_to_DataFrame <- function(suboptFilePath,resCount) {
+  tempMat=read_networkView_suboptFile_to_Matrix(suboptFilePath,resCount)
+  if(!is.null(tempMat) && 
+     !is.null(dim(tempMat)) && 
+     dim(tempMat)[1]==resCount &&
+     dim(tempMat)[2]==resCount){
+    tempFrame=tempMat%>%as.matrix%>%melt%>%as.data.frame()%>%
+      rename(X=Var1,Y=Var2,COUNT=value)%>%filter(COUNT>0)
+  } else {
+    tempFrame=data.frame(X=c(),Y=c(),COUNT=c())
+  }
+  return(tempFrame)
+}
+
+load_windowed_networkView_suboptData <- function(suboptDataDir,suboptFileExt,
+                                        systemNames,windows,weightTypes,resCountsList,
+                                        sourceSetNamesList,sourceSetNodeIDsList,
+                                        targetSetNamesList,targetSetNodeIDsList,
+                                        verbose=FALSE,verboseLevel=0,ordered_nodes=FALSE) {
+  #reads sets of subopt files created by networkView into a joint data frame
+  #
+  #all subopt data files should be stored in suboptDataDir and named as:
+  #	systemName_sourceSetName_targetSetName.window_windowID.weightType.sourceNode_targetNode.suboptFileExt
+  # e.g. wt_FKBP_res375.window_1.CORRweight.203_375.out.out
+  #
+  #Argument specifications:
+  ### systemNames: 			a vector of strings representing the names of each system to load
+  ###							subopt network data for
+  ###
+  ### windows:				a list / array of window numbers or names
+  ### weightTypes: 			a vector of strings representing the names of each weighting used to
+  ###				  			calculate different subopt path networks
+  ###
+  ### resCountsList:			list containing the number of residues for each system
+  ###							i.e. accessed as: resCountsList[[systemName]]
+  ###
+  ### sourceSetNamesList:		a 'list()' of vectors of source set names organized by system name
+  ###							i.e. accessed as: sourceSetNamesList[[systemName]]
+  ###
+  ### sourceSetNodeIDsList:	a list of lists 'list(list())' of vectors of source node indices
+  ###							organized by system name then source set name.
+  ###							i.e. accesssed as: sourceSetNodeIDsList[[systemName]][[sourceSetName]]
+  ### targetSetNamesList:		same as sourceSetNamesList, but for target sets
+  ### 
+  ### targetSetNodeIDsList:	same as sourceSetNodeIDsList, but of target sets
+  suboptDataFrame=data.frame(SYSTEM=c(),WINDOW=c(),WEIGHT_TYPE=c(),
+                             SOURCE_SET=c(),TARGET_SET=c(),
+                             SOURCE_NODE=c(),TARGET_NODE=c(),
+							 PATHS_COUNT=c(),
+                             X=c(),Y=c(),COUNT=c())
+  for(systemName in systemNames){
+    if(verbose){print(paste("working on system",systemName))}
+    sourceSetNames=sourceSetNamesList[[systemName]]
+    targetSetNames=targetSetNamesList[[systemName]]
+    resCount=resCountsList[[systemName]]
+	for(window in windows) {
+		if(verbose){print(paste("-working on window",window))}
+    	for(sourceSetName in sourceSetNames){
+    	  sourceSetNodeIDs=sourceSetNodeIDsList[[systemName]][[sourceSetName]]
+    	  for(targetSetName in targetSetNames){
+    	    if(verbose && verboseLevel>0){print(paste("--working on ",
+    	                                              sourceSetName,"_",targetSetName,
+    	                                              " network",
+    	                                              sep=""))
+    	    }
+    	    targetSetNodeIDs=targetSetNodeIDsList[[systemName]][[targetSetName]]
+    	    for(sourceNode in sourceSetNodeIDs) {
+    	      for(targetNode in targetSetNodeIDs){
+    	        for(weightType in weightTypes){
+    	          if(verbose && verboseLevel>1){
+    	            print(paste("---loading ",weightType," paths for ",
+    	                        sourceNode,"_",targetNode,sep=""))
+    	          }
+    	          if ( ordered_nodes & as.numeric(sourceNode) > as.numeric(targetNode) ) {
+    	            dataFileName=paste(paste(systemName,sourceSetName,targetSetName,
+    	                                     sep="_"),
+									   paste("window",window,sep="_"),
+    	                               weightType,
+    	                               paste(targetNode,sourceNode,sep="_"),
+    	                               suboptFileExt,sep=".")
+    	          } else {
+    	            dataFileName=paste(paste(systemName,sourceSetName,targetSetName,
+    	                                     sep="_"),
+									   paste("window",window,sep="_"),
+    	                               weightType,
+    	                               paste(sourceNode,targetNode,sep="_"),
+    	                               suboptFileExt,sep=".")
+    	          }
+    	          
+    	          dataFilePath=paste(baseDir,dataFileName,sep="/")
+    	          if(!file.exists(dataFilePath)) {
+    	            print(paste("Error:",dataFilePath,"does not exist. The file will be skipped."))
+    	          } else {
+    	            tempFrame=read_networkView_suboptFile_to_DataFrame(dataFilePath,
+    	                                                               resCount)
+    	            if (length(tempFrame)>0){
+    	              #subopt filenames are based on base 0 indexing (vmd)
+    	              #but data is loaded into data frames with base 1 indexing (R)
+    	              #so we need to update the source and target nodes which are set using
+    	              #base 0 indexing (needed to match the base 0 indexed subopt filenames)
+    	              #Note that X and Y node ids are okay since this was alread taken care of
+    	              #in the 'read_networkView_suboptFile_to_DataFrame' function	
+					  pathCount=read_networkView_suboptFile_pathCount(dataFilePath,verbose=FALSE) 
+    	              tempFrame=tempFrame%>%
+    	                mutate(SYSTEM=systemName,WINDOW=window,WEIGHT_TYPE=weightType,
+    	                       SOURCE_SET=sourceSetName,
+    	                       TARGET_SET=targetSetName,
+    	                       SOURCE_NODE=sourceNode+1, 
+    	                       TARGET_NODE=targetNode+1,
+							   PATHS_COUNT=pathCount)%>%
+    	                dplyr::select(SYSTEM,WINDOW,WEIGHT_TYPE,SOURCE_SET,TARGET_SET,
+    	                              SOURCE_NODE,TARGET_NODE,PATHS_COUNT,
+    	                              X,Y,COUNT)
+    	              suboptDataFrame=rbind(suboptDataFrame,tempFrame)
+    	            } else {
+    	              print(paste("ERROR: Data frame could not be obtained for ",
+    	                          dataFilePath,
+    	                          "Skipping File."))
+    	            }
+    	          }
+    	        }
+    	      }
+    	    }
+    	  }
+    	}
+	}
+  }
+  return(suboptDataFrame)
+}
+
+load_windowed_networkView_subopt_nodeCounts <- function(suboptDataDir,suboptFileExt,
+                                        systemNames,windows,weightTypes,resCountsList,
+                                        sourceSetNamesList,sourceSetNodeIDsList,
+                                        targetSetNamesList,targetSetNodeIDsList,
+                                        verbose=FALSE,verboseLevel=0,ordered_nodes=FALSE) {
+  #reads sets of subopt files created by networkView into a joint data frame
+  #
+  #all subopt data files should be stored in suboptDataDir and named as:
+  #	systemName_sourceSetName_targetSetName.window_windowID.weightType.sourceNode_targetNode.suboptFileExt
+  # e.g. wt_FKBP_res375.window_1.CORRweight.203_375.out.out
+  #
+  #Argument specifications:
+  ### systemNames: 			a vector of strings representing the names of each system to load
+  ###							subopt network data for
+  ###
+  ### windows:				a list / array of window numbers or names
+  ### weightTypes: 			a vector of strings representing the names of each weighting used to
+  ###				  			calculate different subopt path networks
+  ###
+  ### resCountsList:			list containing the number of residues for each system
+  ###							i.e. accessed as: resCountsList[[systemName]]
+  ###
+  ### sourceSetNamesList:		a 'list()' of vectors of source set names organized by system name
+  ###							i.e. accessed as: sourceSetNamesList[[systemName]]
+  ###
+  ### sourceSetNodeIDsList:	a list of lists 'list(list())' of vectors of source node indices
+  ###							organized by system name then source set name.
+  ###							i.e. accesssed as: sourceSetNodeIDsList[[systemName]][[sourceSetName]]
+  ### targetSetNamesList:		same as sourceSetNamesList, but for target sets
+  ### 
+  ### targetSetNodeIDsList:	same as sourceSetNodeIDsList, but of target sets
+  suboptDataFrame=data.frame(SYSTEM=c(),WINDOW=c(),WEIGHT_TYPE=c(),
+                             SOURCE_SET=c(),TARGET_SET=c(),
+                             SOURCE_NODE=c(),TARGET_NODE=c(),
+							 PATHS_COUNT=c(),
+                             X=c(),Y=c(),COUNT=c())
+  for(systemName in systemNames){
+    if(verbose){print(paste("working on system",systemName))}
+    sourceSetNames=sourceSetNamesList[[systemName]]
+    targetSetNames=targetSetNamesList[[systemName]]
+    resCount=resCountsList[[systemName]]
+	for(window in windows) {
+		if(verbose){print(paste("-working on window",window))}
+    	for(sourceSetName in sourceSetNames){
+    	  sourceSetNodeIDs=sourceSetNodeIDsList[[systemName]][[sourceSetName]]
+    	  for(targetSetName in targetSetNames){
+    	    if(verbose && verboseLevel>0){print(paste("--working on ",
+    	                                              sourceSetName,"_",targetSetName,
+    	                                              " network",
+    	                                              sep=""))
+    	    }
+    	    targetSetNodeIDs=targetSetNodeIDsList[[systemName]][[targetSetName]]
+    	    for(sourceNode in sourceSetNodeIDs) {
+    	      for(targetNode in targetSetNodeIDs){
+    	        for(weightType in weightTypes){
+    	          if(verbose && verboseLevel>1){
+    	            print(paste("---loading ",weightType," paths for ",
+    	                        sourceNode,"_",targetNode,sep=""))
+    	          }
+    	          if ( ordered_nodes & as.numeric(sourceNode) > as.numeric(targetNode) ) {
+    	            dataFileName=paste(paste(systemName,sourceSetName,targetSetName,
+    	                                     sep="_"),
+									   paste("window",window,sep="_"),
+    	                               weightType,
+    	                               paste(targetNode,sourceNode,sep="_"),
+    	                               suboptFileExt,sep=".")
+    	          } else {
+    	            dataFileName=paste(paste(systemName,sourceSetName,targetSetName,
+    	                                     sep="_"),
+									   paste("window",window,sep="_"),
+    	                               weightType,
+    	                               paste(sourceNode,targetNode,sep="_"),
+    	                               suboptFileExt,sep=".")
+    	          }
+    	          
+    	          dataFilePath=paste(baseDir,dataFileName,sep="/")
+    	          if(!file.exists(dataFilePath)) {
+    	            print(paste("Error:",dataFilePath,"does not exist. The file will be skipped."))
+    	          } else {
+    	            tempFrame=read_networkView_suboptFile_nodeCounts_to_DataFrame(dataFilePath,
+    	                                                               resCount)
+    	            if (length(tempFrame)>0){
+    	              #subopt filenames are based on base 0 indexing (vmd)
+    	              #but data is loaded into data frames with base 1 indexing (R)
+    	              #so we need to update the source and target nodes which are set using
+    	              #base 0 indexing (needed to match the base 0 indexed subopt filenames)
+    	              #Note that X and Y node ids are okay since this was alread taken care of
+    	              #in the 'read_networkView_suboptFile_to_DataFrame' function	
+					  pathCount=read_networkView_suboptFile_pathCount(dataFilePath,verbose=FALSE) 
+    	              tempFrame=tempFrame%>%
+    	                mutate(SYSTEM=systemName,WINDOW=window,WEIGHT_TYPE=weightType,
+    	                       SOURCE_SET=sourceSetName,
+    	                       TARGET_SET=targetSetName,
+    	                       SOURCE_NODE=sourceNode+1, 
+    	                       TARGET_NODE=targetNode+1,
+							   PATHS_COUNT=pathCount)%>%
+    	                dplyr::select(SYSTEM,WINDOW,WEIGHT_TYPE,SOURCE_SET,TARGET_SET,
+    	                              SOURCE_NODE,TARGET_NODE,PATHS_COUNT,
+    	                              ResNum,COUNT)
+    	              suboptDataFrame=rbind(suboptDataFrame,tempFrame)
+    	            } else {
+    	              print(paste("ERROR: Data frame could not be obtained for ",
+    	                          dataFilePath,
+    	                          "Skipping File."))
+    	            }
+    	          }
+    	        }
+    	      }
+    	    }
+    	  }
+    	}
+	}
+  }
+  return(suboptDataFrame)
+}
+
+
+load_networkView_suboptData <- function(suboptDataDir,suboptFileExt,
+                                        systemNames,weightTypes,resCountsList,
+                                        sourceSetNamesList,sourceSetNodeIDsList,
+                                        targetSetNamesList,targetSetNodeIDsList,
+                                        verbose=FALSE,verboseLevel=0,ordered_nodes=FALSE) {
+  #reads sets of subopt files created by networkView into a joint data frame
+  #
+  #all subopt data files should be stored in suboptDataDir and named as:
+  #	systemName_sourceSetName_targetSetName.weightType.sourceNode_targetNode.suboptFileExt
+  #
+  #Argument specifications:
+  ### systemNames: 			a vector of strings representing the names of each system to load
+  ###							subopt network data for
+  ###
+  ### weightTypes: 			a vector of strings representing the names of each weighting used to
+  ###				  			calculate different subopt path networks
+  ###
+  ### resCountsList:			list containing the number of residues for each system
+  ###							i.e. accessed as: resCountsList[[systemName]]
+  ###
+  ### sourceSetNamesList:		a 'list()' of vectors of source set names organized by system name
+  ###							i.e. accessed as: sourceSetNamesList[[systemName]]
+  ###
+  ### sourceSetNodeIDsList:	a list of lists 'list(list())' of vectors of source node indices
+  ###							organized by system name then source set name.
+  ###							i.e. accesssed as: sourceSetNodeIDsList[[systemName]][[sourceSetName]]
+  ### targetSetNamesList:		same as sourceSetNamesList, but for target sets
+  ### 
+  ### targetSetNodeIDsList:	same as sourceSetNodeIDsList, but of target sets
+  suboptDataFrame=data.frame(SYSTEM=c(),WEIGHT_TYPE=c(),
+                             SOURCE_SET=c(),TARGET_SET=c(),
+                             SOURCE_NODE=c(),TARGET_NODE=c(),
+                             X=c(),Y=c(),COUNT=c())
+  for(systemName in systemNames){
+    if(verbose){print(paste("working on system",systemName))}
+    sourceSetNames=sourceSetNamesList[[systemName]]
+    targetSetNames=targetSetNamesList[[systemName]]
+    resCount=resCountsList[[systemName]]
+    for(sourceSetName in sourceSetNames){
+      sourceSetNodeIDs=sourceSetNodeIDsList[[systemName]][[sourceSetName]]
+      for(targetSetName in targetSetNames){
+        if(verbose && verboseLevel>0){print(paste("-working on ",
+                                                  sourceSetName,"_",targetSetName,
+                                                  " network",
+                                                  sep=""))
+        }
+        targetSetNodeIDs=targetSetNodeIDsList[[systemName]][[targetSetName]]
+        for(sourceNode in sourceSetNodeIDs) {
+          for(targetNode in targetSetNodeIDs){
+            for(weightType in weightTypes){
+              if(verbose && verboseLevel>1){
+                print(paste("--loading ",weightType," paths for ",
+                            sourceNode,"_",targetNode,sep=""))
+              }
+              if ( ordered_nodes & as.numeric(sourceNode) > as.numeric(targetNode) ) {
+                dataFileName=paste(paste(systemName,sourceSetName,targetSetName,
+                                         sep="_"),
+                                   weightType,
+                                   paste(targetNode,sourceNode,sep="_"),
+                                   suboptFileExt,sep=".")
+              } else {
+                dataFileName=paste(paste(systemName,sourceSetName,targetSetName,
+                                         sep="_"),
+                                   weightType,
+                                   paste(sourceNode,targetNode,sep="_"),
+                                   suboptFileExt,sep=".")
+              }
+              
+              dataFilePath=paste(baseDir,dataFileName,sep="/")
+              if(!file.exists(dataFilePath)) {
+                print(paste("Error:",dataFilePath,"does not exist. The file will be skipped."))
+              } else {
+                tempFrame=read_networkView_suboptFile_to_DataFrame(dataFilePath,
+                                                                   resCount)
+                if (length(tempFrame)>0){
+                  #subopt filenames are based on base 0 indexing (vmd)
+                  #but data is loaded into data frames with base 1 indexing (R)
+                  #so we need to update the source and target nodes which are set using
+                  #base 0 indexing (needed to match the base 0 indexed subopt filenames)
+                  #Note that X and Y node ids are okay since this was alread taken care of
+                  #in the 'read_networkView_suboptFile_to_DataFrame' function
+                  tempFrame=tempFrame%>%
+                    mutate(SYSTEM=systemName,WEIGHT_TYPE=weightType,
+                           SOURCE_SET=sourceSetName,
+                           TARGET_SET=targetSetName,
+                           SOURCE_NODE=sourceNode+1, 
+                           TARGET_NODE=targetNode+1)%>%
+                    dplyr::select(SYSTEM,WEIGHT_TYPE,SOURCE_SET,TARGET_SET,
+                                  SOURCE_NODE,TARGET_NODE,
+                                  X,Y,COUNT)
+                  suboptDataFrame=rbind(suboptDataFrame,tempFrame)
+                } else {
+                  print(paste("ERROR: Data frame could not be obtained for ",
+                              dataFilePath,
+                              "Skipping File."))
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return(suboptDataFrame)
+}
+summarise_suboptData<-function(suboptData) {
+  return(suboptDataFrame %>%
+           group_by(SYSTEM,WEIGHT_TYPE,SOURCE_SET,TARGET_SET,X,Y) %>%
+           summarise(COUNT_TOTAL=sum(COUNT)))
+}
+write_suboptUsageSummaries_to_networkView_Matrices<-function(baseDir,outputExt="subopt.dat",resCountsList,
+                                                             suboptData,verbose=FALSE){
+  suboptDataSummary<-summarise_suboptData(suboptData)
+  for(systemName in suboptDataSummary$SYSTEM%>%factor%>%levels){
+    resCount=resCountsList[[systemName]]
+    for(weightType in suboptDataSummary$WEIGHT_TYPE%>%factor%>%levels){
+      for(sourceSet in suboptDataSummary$SOURCE_SET%>%factor%>%levels){
+        for(targetSet in suboptDataSummary$TARGET_SET%>%factor%>%levels) {
+          outputNetworkName=paste(systemName,sourceSet,targetSet,sep="_")
+          if(verbose){print(paste("Writting data for",outputNetworkName,weightType,"network"))}
+          flush.console()
+          tempFrame=suboptDataSummary %>% 
+            filter(SYSTEM==systemName,SOURCE_SET==sourceSet,TARGET_SET==targetSet,
+                   COUNT_TOTAL>0) %>%
+            mutate(USAGE=COUNT_TOTAL/max(COUNT_TOTAL),
+                   USAGEweight=-log(USAGE),
+                   USAGEstrength=-1/(-1+log(USAGE)))
+          weightFileName=paste(outputNetworkName,weightType,"USAGEweight",outputExt,sep=".")
+          strengthFileName=paste(outputNetworkName,weightType,"USAGEstrength",outputExt,sep=".")
+          weightFilePath=paste(baseDir,weightFileName,sep="/")
+          strengthFilePath=paste(baseDir,strengthFileName,sep="/")
+          write_networkDataTable_to_networkView_matrix(weightFilePath,
+                                                       networkData=tempFrame,valColumn="USAGEweight",
+                                                       nodeCount=resCount,indexOffset=-1)
+          write_networkDataTable_to_networkView_matrix(strengthFilePath,
+                                                       networkData=tempFrame,valColumn="USAGEstrength",
+                                                       nodeCount=resCount,indexOffset=-1)
+        }
+      }
+    }
+  }
+  if(verbose){print("DONE")}	
 }
 ###################################################################################################
 ##########################################IGRAPH section ##########################################
@@ -772,7 +1634,8 @@ gen_plot_graph_from_contact_graph <- function(g,srcnodes=c(),trgnodes=c(),mResid
   g <- add_src_trg_labeling_to_graph(g,gResDat,srcnodes,trgnodes,mResids)
   return(g %>% simplify(edge.attr.comb="mean"))
 }
-plot_full_graph_hcl <- function(g,vertSizes,edgeSizes,edgeValues,show_legend=FALSE) {
+plot_full_graph_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
+                                show_legend=FALSE,showLabels=TRUE) {
   V(g)$size=vertSizes
   E(g)$width=edgeSizes
   edgeColorInds=grid_interp_values(edgeValues,length(edgeValues))
@@ -788,6 +1651,10 @@ plot_full_graph_hcl <- function(g,vertSizes,edgeSizes,edgeValues,show_legend=FAL
   g_plot <- graph_from_data_frame(g_frames$edges,directed=FALSE,vertices=g_frames$vertices)
   g_plot$layout=g$layout
   
+  if(showLabels==FALSE) {
+    V(g_plot)$label=""
+  }
+  
   plot.igraph(g_plot)
   
   if (show_legend) {
@@ -798,7 +1665,7 @@ plot_full_graph_hcl <- function(g,vertSizes,edgeSizes,edgeValues,show_legend=FAL
   }
 }
 plot_full_graph_heat_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
-                                     show_legend=FALSE) {
+                                     show_legend=FALSE,showLabels=TRUE) {
   V(g)$size=vertSizes
   E(g)$width=edgeSizes
   edgeColorInds=grid_interp_values(edgeValues,length(edgeValues))
@@ -814,8 +1681,12 @@ plot_full_graph_heat_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
   g_plot <- graph_from_data_frame(g_frames$edges,directed=FALSE,vertices=g_frames$vertices)
   g_plot$layout=g$layout
   
-  plot.igraph(g_plot)
+  if(showLabels==FALSE) {
+    V(g_plot)$label=""
+  }
   
+  plot.igraph(g_plot)
+
   if (show_legend) {
     legend.gradient(cbind(x =c(0.85,0.9,0.9,0.85)+.25, y =c(1.0,1.0,0.8,0.8)*8-7.5),
                     cols=heat_hcl(length(edgeValues),c=c(80,30),l=c(30,90),power=c(1.5,1.5)),
@@ -824,7 +1695,7 @@ plot_full_graph_heat_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
   }
 }
 plot_full_graph_diverge_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
-                                        show_legend=FALSE) {
+                                        show_legend=FALSE,showLabels=TRUE) {
   V(g)$size=vertSizes
   E(g)$width=edgeSizes
   edgeColorInds=grid_interp_values(edgeValues,length(edgeValues))
@@ -840,6 +1711,10 @@ plot_full_graph_diverge_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
   g_plot <- graph_from_data_frame(g_frames$edges,directed=FALSE,vertices=g_frames$vertices)
   g_plot$layout=g$layout
   
+  if(showLabels==FALSE) {
+    V(g_plot)$label=""
+  }
+  
   plot.igraph(g_plot)
   
   if (show_legend) {
@@ -850,7 +1725,7 @@ plot_full_graph_diverge_hcl <- function(g,vertSizes,edgeSizes,edgeValues,
   }
 }
 plot_full_graph_matlablike2 <- function(g,vertSizes,edgeSizes,edgeValues,
-                                        show_legend=FALSE) {
+                                        show_legend=FALSE,showLabels=TRUE) {
   V(g)$size=vertSizes
   E(g)$width=edgeSizes
   edgeColorInds=grid_interp_values(edgeValues,length(edgeValues))
@@ -865,6 +1740,10 @@ plot_full_graph_matlablike2 <- function(g,vertSizes,edgeSizes,edgeValues,
   
   g_plot <- graph_from_data_frame(g_frames$edges,directed=FALSE,vertices=g_frames$vertices)
   g_plot$layout=g$layout
+  
+  if(showLabels==FALSE) {
+    V(g_plot)$label=""
+  }
   
   plot.igraph(g_plot)
   
@@ -909,7 +1788,7 @@ plot_subOpt_flow_matlablike2 <- function(g,srcnodes,trgnodes,
                                          pvColor="magenta",scaleFactor=64,
                                          labelPathVertResids=FALSE,
                                          vertResidThreshold=.90,verbose=FALSE,
-                                         scaleVerts=TRUE) {
+                                         scaleVerts=TRUE,showLabels=TRUE) {
   plot_vert_ids=subOpt_path_data$vertIds
   plot_edge_ids=subOpt_path_data$edgeIds
   V(g)$color[plot_vert_ids]=pvColor
@@ -945,6 +1824,11 @@ plot_subOpt_flow_matlablike2 <- function(g,srcnodes,trgnodes,
   g_plot$layout=g$layout
   
   par(bg="grey50")
+  
+  if(showLabels==FALSE) {
+    V(g_plot)$label=""
+  }
+  
   plot.igraph(g_plot,
               vertex.label.dist=.25,
               vertex.label.font=1,
@@ -982,7 +1866,8 @@ gen_btw_subOptPath_graph_from_Data <- function(gResData,corr_data,system,
   if(verbose) {print("Done!");flush.console()}
   return(plot_graph)
 }
-gen_subOpt_graph_info_Frames <- function(g,subOptData=g$subOpt_path_data) {
+gen_subOpt_graph_info_Frames <- function(g,subOptData=g$subOpt_path_data)
+  {
   vertIds=subOptData$vertIds
   edgeIds=subOptData$edgeIds
   vertInfo=as_data_frame(g,what="vertices")[
@@ -992,5 +1877,415 @@ gen_subOpt_graph_info_Frames <- function(g,subOptData=g$subOpt_path_data) {
   return(list(vertInfo=vertInfo,edgeInfo=edgeInfo))
 }
 
+gen_btw_graph_from_Data <- function(gResData,corr_data,system,
+                                    srcnodes,trgnodes,mResids=c(),
+                                    srcColor="orange",trgColor="red",
+                                    mColor="darkviolet",
+                                    verbose=FALSE) {
+  if(verbose){print("Generating contact correlation graph");flush.console()}
+  contact_corr_graph <- contact_corr_graph_from_Data(gResData,corr_data,system)
+  if(verbose){print("Generating Current-Flow-Betweenness data");flush.console()}
+  btw_dat=compute_full_betweenness(contact_corr_graph,srcnodes,trgnodes)
+  V(contact_corr_graph)$btw=btw_dat$Vbtw
+  E(contact_corr_graph)$btw=btw_dat$Ebtw
+  rm(btw_dat)
+  if(verbose) {print("Constructing plot graph from contact graph and betweenness data");flush.console()}
+  plot_graph <- gen_plot_graph_from_contact_graph(contact_corr_graph,
+                                                  srcnodes,trgnodes,mResids)
+  if(verbose) {print("Done!");flush.console()}
+  return(plot_graph)
+}
 
+do_windowed_betweenness_analysis <- function(windowed_corr_data,resData,
+                                             sourceSetsList,targetSetsList,
+                                             sourceNodeList,targetNodeList,
+                                             nRes=max(c(windowed_corr_data$X,windowed_corr_data$Y)),
+                                             windows=windowed_corr_data$WINDOW %>%
+                                               unique %>% as.character,
+                                             systems=windowed_corr_data$SYSTEM %>%
+                                               unique %> %as.character,
+                                             includeGraphList=FALSE,mResids=c()) {
+  if (includeGraphList==TRUE){
+    graphList=list()
+  }
+  count=0
+  for(system in systems){
+    resDat=resData %>% filter(SYSTEM==system) %>%
+      dplyr::select(ResNum,RESID,RESNAME,Residue,rX,rY,rZ,SYSTEM)
+    for(window in windows){
+      contactDat=windowed_corr_data %>%
+        filter(SYSTEM==system,WINDOW==window)
+      print("------------------------------")
+      sources=sourceSetsList[[system]]
+      targets=targetSetsList[[system]]
+      print(paste("Working on",system,"system"))
+      print("-source sets:")
+      print(sources)
+      print("-target sets:")
+      for(source in sources) {
+        srcnodes=sourceNodeList[[source]]
+        for(target in targets) {
+          trgnodes=targetNodeList[[target]]
+          print("--Source nodes:")
+          print(srcnodes)
+          print("--Target nodes:")
+          print(trgnodes)
+          flush.console()
+          temp_graph=gen_btw_graph_from_Data(resDat,contactDat,system,
+                                             srcnodes = srcnodes,trgnodes = trgnodes,
+                                             mResids = mResids,verbose=TRUE)
+          if(includeGraphList==TRUE){
+            graphList[paste(paste(system,source,target,sep="_"),
+                            paste("window",window,sep="_"),sep=".")]=temp_graph
+          }
+          temp_frame <- as_data_frame(temp_graph) %>% 
+            rename(X=from,Y=to)%>%
+            mutate(X_Y=paste(X,Y,sep="_")) %>%
+            mutate(X=X%>%as.numeric,Y=Y%>%as.numeric,
+                   SYSTEM=system,WINDOW=window,NETWORK=paste(source,target,sep="_")) %>%
+            select(SYSTEM,WINDOW,NETWORK,X,Y,X_Y,CORR,btw)
+          if(count==0){
+            network_analysis_frame=temp_frame
+          } else {
+            network_analysis_frame=rbind(network_analysis_frame,temp_frame)
+          }
+          count=count+1
+        }
+      }
+    }
+  }
+  if(includeGraphList) {
+    return(list(graphList=graphList,dataFrame=network_analysis_frame))
+  } else {
+    return(network_analysis_frame)
+  }
+}
+write_tcl_load_scripts <- function(systems,sourceSetsList,targetSetsList,
+                                   sourceNodeList,targetNodeList,weightTypes,
+                                   outdir="",weightdir="",
+                                   verbose=FALSE,verboseLevel=0,
+                                   loaderSource="load_suboptimal_paths.tcl") {
+  for(system in systems) {
+    sourceSet = sourceSetsList[[system]]
+    targetSet = targetSetsList[[system]]
+    for(source in sourceSet) {
+      sourceNodes=sourceNodeList[[source]]
+      for(target in targetSet) {
+        targetNodes=targetNodeList[[target]]
+        for(weightType in weightTypes) {
+          outFileName=paste(paste(system,source,target,sep="_"),
+                            weightType,"subopt.loader.tcl",sep=".")
+          outFilePath=paste(outdir,outFileName,sep="/")
+          tcl_lines=c(paste("source",loaderSource),
+                      paste("set sourceNodeIDs {",
+                            paste(sourceNodes,collapse=" "),"}"),
+                      paste("set targetNodeIDs {",
+                            paste(targetNodes,collaps=" "),"}"),
+                      paste("load_suboptimal_paths",outdir,outdir,system,
+                            source,target,"$sourceNodeIDs","$targetNodeIDs",
+                            weightType))
+          writeLines(tcl_lines,outFilePath)
+          if(verbose & verboseLevel>1) {
+            print(paste(paste(rep(" - ",5),collapse=""),
+                        outFileName,
+                        paste(rep(" - ",5),collapse="")))
+            print(paste("filepath:",outFilePath))
+            for(line in tcl_lines){
+              print(line)
+            }
+            print(paste(rep(" - ",10+round(nchar(outFileName)/3,0)+1),collapse=""))
+          }
+        }
+      }
+    }
+  }
+}
+run_external_subopt <- function(systems,sourceSetsList,targetSetsList,
+                                sourceNodeList,targetNodeList,
+                                weightTypes,dilationList,
+                                outdir="",weightdir="",suboptexe="subopt",
+                                verbose=FALSE,verboseLevel=0){
+  for(system in systems) {
+    if(verbose){print(paste("Working on",system,"system"))}
+    sourceSet=sourceSetsList[[system]]
+    targetSet=targetSetsList[[system]]
+    for(source in sourceSet) {
+      for(target in targetSet) {
+        networkName=paste(source,target,sep="_")
+        if(verbose & verboseLevel>0){print(paste("-working on",networkName,"network"))}
+        for(weightType in weightTypes){
+          weightFileName=paste(paste(system,networkName,sep="_"),
+                               weightType,"dat",sep=".")
+          weightFilePath=paste(weightdir,weightFileName,sep="/")
+          if(!file.exists(weightFilePath)){
+            print(paste("ERROR: the weightFile",
+                        weightFilePath,"does not exist!"))
+            next
+          }
+          sourceNodes=sourceNodeList[[source]]
+          targetNodes=targetNodeList[[target]]
+          dilation=dilationList[[weightType]]
+          for(sourceNode in sourceNodes) {
+            for(targetNode in targetNodes) {
+              if (as.numeric(sourceNode) <= as.numeric(targetNode)) {
+                nodePairName=paste(sourceNode,targetNode,sep="_")
+                sourceID=sourceNode
+                targetID=targetNode
+              } else {
+                nodePairName=paste(targetNode,sourceNode,sep="_")
+                sourceID=targetNode
+                targetID=sourceNode
+              }
+              if(verbose & verboseLevel>1){print(paste("---running subopt program for the",
+                                                       nodePairName,"source-target pair"))}
+              outFileName=paste(paste(system,networkName,sep="_"),
+                                weightType,nodePairName,
+                                "subopt.out",sep=".")
+              outFilePath=paste(outdir,outFileName,sep="/")
+              if(verbose & verboseLevel>2) {
+                print(paste("----weightFilePath:",weightFilePath))
+                print(paste("----outFilePath:",outFilePath))
+              }
+              system2(suboptexe,
+                      args=c(weightFilePath,outFilePath,
+                             dilation,sourceID,targetID))
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+run_windowed_external_subopt <- function(systems,windows,sourceSetsList,targetSetsList,
+                                sourceNodeList,targetNodeList,
+                                weightTypes,dilationList,
+                                outdir="",weightdir="",suboptexe="subopt",
+                                verbose=FALSE,verboseLevel=0){
+  for(system in systems) {
+    if(verbose){print(paste("Working on",system,"system"))}
+    sourceSet=sourceSetsList[[system]]
+    targetSet=targetSetsList[[system]]
+    for(source in sourceSet) {
+      for(target in targetSet) {
+        networkName=paste(source,target,sep="_")
+		if(verbose & verboseLevel>0){print(paste("-working on",networkName,"network"))}
+		for(window in windows) {
+        	if(verbose & verboseLevel>0){print(paste("--working on window",window))}
+        	for(weightType in weightTypes){
+        	  weightFileName=paste(paste(system,networkName,sep="_"),
+								   paste("window",window,sep="_"),
+        	                       weightType,"dat",sep=".")
+        	  weightFilePath=paste(weightdir,weightFileName,sep="/")
+        	  if(!file.exists(weightFilePath)){
+        	    print(paste("ERROR: the weightFile",
+        	                weightFilePath,"does not exist!"))
+        	    next
+        	  }
+        	  sourceNodes=sourceNodeList[[source]]
+        	  targetNodes=targetNodeList[[target]]
+        	  dilation=dilationList[[weightType]]
+        	  for(sourceNode in sourceNodes) {
+        	    for(targetNode in targetNodes) {
+        	      if (as.numeric(sourceNode) <= as.numeric(targetNode)) {
+        	        nodePairName=paste(sourceNode,targetNode,sep="_")
+        	        sourceID=sourceNode
+        	        targetID=targetNode
+        	      } else {
+        	        nodePairName=paste(targetNode,sourceNode,sep="_")
+        	        sourceID=targetNode
+        	        targetID=sourceNode
+        	      }
+        	      if(verbose & verboseLevel>1){print(paste("---running subopt program for the",
+        	                                               nodePairName,"source-target pair"))}
+        	      outFileName=paste(paste(system,networkName,sep="_"),
+									paste("window",window,sep="_"),
+        	                        weightType,nodePairName,
+        	                        "subopt.out",sep=".")
+        	      outFilePath=paste(outdir,outFileName,sep="/")
+        	      if(verbose & verboseLevel>2) {
+        	        print(paste("----weightFilePath:",weightFilePath))
+        	        print(paste("----outFilePath:",outFilePath))
+        	      }
+        	      system2(suboptexe,
+        	              args=c(weightFilePath,outFilePath,
+        	                     dilation,sourceID,targetID))
+        	    }
+        	  }
+        	}
+		}
+      }
+    }
+  }
+}
+
+
+do_windowed_network_aov <- function(network_analysis_data,
+                                    outfilebase="all_aov_summary",
+                                    chunkDir="all_aov_chunks",
+                                    chunksize=30,verbose=FALSE,verboseLevel=0) {
+  #prep data from network_analysis_frame for aov
+  #need to make sure every edge present has an entry for every window
+  #missing entries are set to 0 (since a missing entry most likely means lack of contact)
+  if(verbose){
+    print("Preparing data for analysis")
+  }
+  aov_data <- network_analysis_data %>%
+    melt(id.vars = c("SYSTEM","WINDOW","NETWORK","X","Y","X_Y"),
+         variable.name = "MEASUREMENT", value.name="VALUE") %>%
+    unite(SYSTEM.NETWORK.MEASUREMENT.WINDOW,SYSTEM,NETWORK,MEASUREMENT,WINDOW,sep=".") %>%
+    tidyr::spread(key=SYSTEM.NETWORK.MEASUREMENT.WINDOW,value=VALUE,fill=0) %>%
+    melt(id.vars=c("X","Y","X_Y"),
+         variable.name="SYSTEM.NETWORK.MEASUREMENT.WINDOW",value.name="VALUE") %>%
+    as.data.frame %>%
+    tidyr::separate(col=SYSTEM.NETWORK.MEASUREMENT.WINDOW,
+                    into=c("SYSTEM","NETWORK","MEASUREMENT","WINDOW"),sep="[.]") %>%
+    select(SYSTEM,WINDOW,NETWORK,X,Y,X_Y,MEASUREMENT,VALUE)
+  
+  if(verbose){
+    if(verboseLevel>0){
+      print(paste("-Measurement types to be analyzed:",
+                  aov_data$MEASUREMENT%>% unique %>% as.character))
+    }
+    print("Computing windowed averages and pValues")
+  }
+  #aov_data %>% head
+  count=0
+  for(measurement in aov_data$MEASUREMENT %>% unique %>% as.character) {
+    if(verbose & verboseLevel > 0) {
+      paste("working on",measurement) %>% print
+    }
+    temp_dat <- aov_data %>% filter(MEASUREMENT==measurement) %>%
+      group_by(SYSTEM,NETWORK,X,Y,X_Y,MEASUREMENT)
+    
+    #temp_dat %>% head %>% print
+    
+    avg_dat <- temp_dat %>%
+      summarise(VALUE=mean(VALUE)) %>%
+      as.data.frame()
+    
+    #avg_dat %>% head %>% print
+    #temp_dat %>% head %>% print
+    
+    p_dat <- temp_dat %>% 
+      summarise(VALUE=t.test(VALUE)$p.value) %>% as.data.frame %>% 
+      #        head %>% print
+      mutate(MEASUREMENT=paste(MEASUREMENT,"pValue",sep="."))
+    
+    if(verbose & verboseLevel > 1){
+      print(paste("-",measurement,"pvalue frame preview:"))
+      p_dat %>% head %>% print
+    }
+    if (count==0) {
+      aov_summary <- rbind(avg_dat,p_dat) %>% as.data.frame()
+    } else {
+      aov_summary <- rbind(rbind(aov_summary,avg_dat),p_dat)
+    }
+    #aov_summary %>% head %>% print
+    #typeof(aov_summary) %>% print
+    count=count+1
+  }
+  
+  
+  
+  contacts <- (aov_summary %>%
+                 filter(grepl("pValue",MEASUREMENT),is.finite(VALUE)))$X_Y %>% 
+    unique %>% as.character
+  
+  measurements <- (aov_data$MEASUREMENT%>%unique%>%as.character)
+  
+  if(verbose){
+    print("Running anova for each system and contact pair")
+    if(verboseLevel>0){
+      cat(paste( (measurements%>%length)*(contacts%>%length) / chunksize,"chunks"))
+      }
+  }
+  syscount=aov_data$SYSTEM%>%unique%>%length
+  if(verbose & verboseLevel>0){
+    cat("\nsyscount = ")
+    cat(syscount)
+    cat("\n---run summary---\n")
+    cat("\n. = good (all systems present)\n")
+    cat("o = incomplete (at least 2, but not all, systems present)\n")
+    cat("X = uncomputable (fewer than 2 systems preset)\n")
+    cat("\n working on chunk \n")
+  }
+  count=0
+  cnum=1
+  if(verbose & verboseLevel>0){
+    cat(sprintf("%5s ",cnum))
+  }
+  networks = aov_data$NETWORK %>% unique %>% as.character()
+  tempchunk=data.frame(X_Y=c(),X=c(),Y=c(),
+                       NETWORK=c(),MEASUREMENT_SYSTEM=c(),MEASURMENT_TYPE=c(),VALUE=c())
+  
+  outfile=paste(chunkDir,"/",outfilebase,".chunk_",cnum,".dat",sep="")
+  
+  aov_summary <- aov_summary %>% 
+    rename(MEASUREMENT_TYPE=MEASUREMENT,MEASUREMENT_SYSTEM=SYSTEM) %>%
+    select(X_Y,X,Y,NETWORK,MEASUREMENT_SYSTEM,MEASUREMENT_TYPE,VALUE)
+  aov_data <- aov_data %>% 
+    rename(MEASUREMENT_TYPE=MEASUREMENT,MEASUREMENT_SYSTEM=SYSTEM) %>%
+    select(X_Y,X,Y,WINDOW,NETWORK,MEASUREMENT_SYSTEM,MEASUREMENT_TYPE,VALUE)
+  for(network in networks) {
+    if(verbose & verboseLevel==0) {print(paste("-working on",network,"network"))}
+    for(measurement in measurements) {
+      if(verbose & verboseLevel==0){print(paste("--working on",measurment,"measurements"))}
+      for(contact in contacts) {
+        if(verbose & verboseLevel==0){print(paste("--working on contact pair",contact))}
+        test_dat <- aov_data %>% 
+          filter(NETWORK==network,MEASUREMENT_TYPE==measurement,X_Y==contact,
+                 is.finite(VALUE))
+        sys_count <- test_dat$MEASUREMENT_SYSTEM %>% unique %>% length
+        temp_split=strsplit(x=contact,split="_")[[1]]
+        temp_x=temp_split[1]
+        temp_y=temp_split[2]
+        if((sys_count) > 1) {
+          if(verbose & verboseLevel>1)  {
+            if (sys_count == syscount) {
+              cat(sprintf("%1s ","."))
+            } else {
+              cat(sprintf("%1s ","o"))
+            }
+          }
+          test_aov <- test_dat %>% aov(VALUE~MEASUREMENT_SYSTEM,data=.)
+          test_tuk <- (test_aov %>% TukeyHSD)$MEASUREMENT_SYSTEM %>% 
+            as.data.frame %>%
+            tibble::rownames_to_column(var="MEASUREMENT_SYSTEM")
+          temp_dat <- test_tuk %>%
+            mutate(X_Y=contact,X=temp_x,Y=temp_y,NETWORK=network,
+                   MEASUREMENT_STAT=measurement) %>%
+            melt(id.vars=c("X_Y","X","Y","NETWORK",
+                           "MEASUREMENT_SYSTEM","MEASUREMENT_STAT"),
+                 variable.name="MEASUREMENT",
+                 value.name="VALUE")%>%
+            mutate(MEASUREMENT=gsub(" ","_",MEASUREMENT)) %>%
+            mutate(MEASUREMENT_TYPE=paste(MEASUREMENT_STAT,MEASUREMENT,sep=".")) %>%
+            select(X_Y,X,Y,NETWORK,MEASUREMENT_SYSTEM,MEASUREMENT_TYPE,VALUE)
+          tempchunk <- rbind(tempchunk,temp_dat)
+          aov_summary <- rbind(aov_summary,temp_dat)
+        } else {
+          if(verbose & verboseLevel > 1) {cat(sprintf("%1s ","X"))}
+        }
+        count=count+1
+        if(count > chunksize) {
+          if(verbose & verboseLevel > 1) {
+            cat("\n")
+          }
+          count=0
+          cnum=cnum+1
+          if(verbose & verboseLevel > 0) {
+            cat(sprintf("%5s ",cnum))
+          }
+          write.table(tempchunk,outfile,quote=FALSE,row.names=FALSE)
+          tempchunk=data.frame(X_Y=c(),X=c(),Y=c(),
+                               MEASUREMENT_SYSTEM=c(),MEASURMENT_TYPE=c(),VALUE=c())
+          outfile=paste(chunkDir,"/",outfilebase,".chunk_",cnum,".dat",sep="")
+        }
+      }
+    }
+  }
+  
+  return(aov_summary)
+}
 ###################################################################################################
