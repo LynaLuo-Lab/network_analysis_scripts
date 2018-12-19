@@ -1,0 +1,9 @@
+# 12/05/18 15:53:32
+# step3_charmm2amber.psf
+# Loaded topologies:
+#   step3_charmm2amber.psf
+trajin all_production.aligned.dcd
+help trajout
+trajout short_production.aligned.dcd onlyframes 450-500
+go
+quit

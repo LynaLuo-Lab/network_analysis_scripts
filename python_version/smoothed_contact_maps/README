@@ -1,0 +1,15 @@
+The ipython notebook here illustrates how to
+use pytraj to generate smoothed contact maps
+linear and gaussian smoothing functions are
+used as examples but other functions could be
+applied as well.
+The idea here is to apply a function that maps
+the minimum distance between atoms in a given
+pair of residues to a function that transitions
+smoothly from 0 for no contact to 1 for full
+contact rather than use a shap cutoff value.
+The functions given here are by no means optimal
+and while they appear to significantly stablise
+the contact topology, this was later seen to
+have relatively little impact on node / edge
+ranking based on suboptimal path frequencies.

@@ -1,0 +1,2251 @@
+Info) VMD for LINUXAMD64, version 1.9.2 (December 29, 2014)
+Info) http://www.ks.uiuc.edu/Research/vmd/                         
+Info) Email questions and bug reports to vmd@ks.uiuc.edu           
+Info) Please include this reference in published work using VMD:   
+Info)    Humphrey, W., Dalke, A. and Schulten, K., `VMD - Visual   
+Info)    Molecular Dynamics', J. Molec. Graphics 1996, 14.1, 33-38.
+Info) -------------------------------------------------------------
+Info) Multithreading available, 32 CPUs detected.
+Info) Free system memory: 63002MB (97%)
+Warning) Detected a mismatch between CUDA runtime and GPU driver
+Warning) Check to make sure that GPU drivers are up to date.
+Info) No CUDA accelerator devices available.
+Info) Dynamically loaded 2 plugins in directory:
+Info) /home/wesley/lib/vmd/plugins/LINUXAMD64/molfile
+/home/wesley/lib/vmd/scripts/tcl8.5 /home/wesley/lib/vmd/scripts /home/wesley/lib/lib /Projects/johns/tcl/8.5.6/lib_LINUXAMD64/lib /home/wesley/lib/vmd/scripts/vmd /home/wesley/lib/vmd/plugins/LINUXAMD64/tcl /home/wesley/lib/vmd/plugins/noarch/tcl /cm/shared/apps/vmd-1.9.2/plugins/noarch/tcl/la1.0
+/home/wesley/lib/vmd/scripts/tcl8.5 /home/wesley/lib/vmd/scripts /home/wesley/lib/lib /Projects/johns/tcl/8.5.6/lib_LINUXAMD64/lib /home/wesley/lib/vmd/scripts/vmd /home/wesley/lib/vmd/plugins/LINUXAMD64/tcl /home/wesley/lib/vmd/plugins/noarch/tcl /cm/shared/apps/vmd-1.9.2/plugins/noarch/tcl/la1.0 /cm/shared/apps/vmd-1.9.2/plugins/noarch/tcl/orient
+1.41
+line: ../Q207E.psf
+../Q207E.psf
+../Q207E.aligned.4.dcd
+line: (protein) and (not hydrogen)
+(protein) and (not hydrogen)
+line: (name CA) 
+(name CA) 
+psfplugin) Detected a Charmm PSF file
+psfplugin) Detected a Charmm PSF EXTEnded file
+Info) Using plugin psf for structure file ../Q207E.psf
+Info) Analyzing structure ...
+Info)    Atoms: 143528
+Info)    Bonds: 143344
+Info)    Angles: 58019  Dihedrals: 18395  Impropers: 1196  Cross-terms: 431
+Info)    Bondtypes: 0  Angletypes: 0  Dihedraltypes: 0  Impropertypes: 0
+Info)    Residues: 46160
+Info)    Waters: 45466
+Info)    Segments: 5
+Info)    Fragments: 45727   Protein: 2   Nucleic: 0
+dcdplugin) detected standard 32-bit DCD file of native endianness
+dcdplugin) CHARMM format DCD file (also NAMD 2.1 and later)
+Info) Using plugin dcd for coordinates from file ../Q207E.aligned.4.dcd
+psfplugin) WARNING: PSF file is incomplete, no angles, dihedrals,
+psfplugin)          impropers, or cross-terms will be written. 
+Info) Opened coordinate file carma.psf for writing.
+Info) Finished with coordinate file carma.psf.
+psfplugin) Writing angles/dihedrals/impropers...
+Info) Opened coordinate file adjacency.psf for writing.
+Info) Finished with coordinate file adjacency.psf.
+psfplugin) Detected a Charmm PSF file
+Info) Using plugin psf for structure file adjacency.psf
+Info) Analyzing structure ...
+Info)    Atoms: 3441
+Info)    Bonds: 3516
+Info)    Angles: 4764  Dihedrals: 5635  Impropers: 594  Cross-terms: 431
+Info)    Bondtypes: 0  Angletypes: 0  Dihedraltypes: 0  Impropertypes: 0
+Info)    Residues: 435
+Info)    Waters: 0
+Info)    Segments: 2
+Info)    Fragments: 2   Protein: 2   Nucleic: 0
+dcdplugin) detected standard 32-bit DCD file of native endianness
+dcdplugin) CHARMM format DCD file (also NAMD 2.1 and later)
+Info) Using plugin dcd for coordinates from file adjacency.dcd
+Info) Finished with coordinate file adjacency.dcd.
+line: (protein) and (not hydrogen)
+(protein) and (not hydrogen)
+line: (name CA) 
+(name CA) 
+notSameResidue
+notNeighboringCAlpha
+notNeighboringResidue
+>prepareNodeMap
+nodeSelString: ((protein) and (not hydrogen)) and ((name CA) )
+clusterSelString: residue 0
+0 1 2 3 4 5 6 
+clusterSelString: residue 1
+7 8 9 10 11 12 13 
+clusterSelString: residue 2
+14 15 16 17 18 19 20 21 
+clusterSelString: residue 3
+22 23 24 25 26 27 28 
+clusterSelString: residue 4
+29 30 31 32 
+clusterSelString: residue 5
+33 34 35 36 37 38 39 40 
+clusterSelString: residue 6
+41 42 43 44 45 46 
+clusterSelString: residue 7
+47 48 49 50 51 52 53 
+clusterSelString: residue 8
+54 55 56 57 58 59 60 61 
+clusterSelString: residue 9
+62 63 64 65 66 
+clusterSelString: residue 10
+67 68 69 70 71 72 73 74 
+clusterSelString: residue 11
+75 76 77 78 79 80 81 82 
+clusterSelString: residue 12
+83 84 85 86 87 88 89 90 
+clusterSelString: residue 13
+91 92 93 94 95 96 97 98 
+clusterSelString: residue 14
+99 100 101 102 103 104 105 106 107 108 
+clusterSelString: residue 15
+109 110 111 112 113 114 
+clusterSelString: residue 16
+115 116 117 118 119 120 
+clusterSelString: residue 17
+121 122 123 124 125 126 127 
+clusterSelString: residue 18
+128 129 130 131 132 133 
+clusterSelString: residue 19
+134 135 136 137 
+clusterSelString: residue 20
+138 139 140 141 142 143 
+clusterSelString: residue 21
+144 145 146 147 
+clusterSelString: residue 22
+148 149 150 151 152 153 
+clusterSelString: residue 23
+154 155 156 157 
+clusterSelString: residue 24
+158 159 160 161 162 163 164 165 
+clusterSelString: residue 25
+166 167 168 169 170 171 172 
+clusterSelString: residue 26
+173 174 175 176 177 178 179 180 181 182 183 
+clusterSelString: residue 27
+184 185 186 187 188 189 190 191 
+clusterSelString: residue 28
+192 193 194 195 196 197 198 
+clusterSelString: residue 29
+199 200 201 202 203 204 205 206 207 
+clusterSelString: residue 30
+208 209 210 211 212 213 214 215 216 217 218 
+clusterSelString: residue 31
+219 220 221 222 223 224 225 
+clusterSelString: residue 32
+226 227 228 229 230 231 232 
+clusterSelString: residue 33
+233 234 235 236 237 
+clusterSelString: residue 34
+238 239 240 241 242 243 244 245 246 247 248 
+clusterSelString: residue 35
+249 250 251 252 253 254 255 256 257 
+clusterSelString: residue 36
+258 259 260 261 262 263 264 265 
+clusterSelString: residue 37
+266 267 268 269 270 271 272 
+clusterSelString: residue 38
+273 274 275 276 277 278 279 280 
+clusterSelString: residue 39
+281 282 283 284 285 286 287 288 
+clusterSelString: residue 40
+289 290 291 292 293 294 295 296 297 
+clusterSelString: residue 41
+298 299 300 301 302 303 
+clusterSelString: residue 42
+304 305 306 307 308 309 310 
+clusterSelString: residue 43
+311 312 313 314 
+clusterSelString: residue 44
+315 316 317 318 319 320 321 322 323 
+clusterSelString: residue 45
+324 325 326 327 
+clusterSelString: residue 46
+328 329 330 331 332 333 334 335 336 337 338 
+clusterSelString: residue 47
+339 340 341 342 343 344 345 346 347 348 349 350 
+clusterSelString: residue 48
+351 352 353 354 
+clusterSelString: residue 49
+355 356 357 358 359 360 361 362 363 
+clusterSelString: residue 50
+364 365 366 367 368 369 370 
+clusterSelString: residue 51
+371 372 373 374 375 376 377 378 379 380 381 382 383 384 
+clusterSelString: residue 52
+385 386 387 388 389 390 391 392 393 394 395 
+clusterSelString: residue 53
+396 397 398 399 
+clusterSelString: residue 54
+400 401 402 403 404 405 
+clusterSelString: residue 55
+406 407 408 409 410 411 412 413 414 415 416 417 418 419 
+clusterSelString: residue 56
+420 421 422 423 424 425 426 427 428 
+clusterSelString: residue 57
+429 430 431 432 
+clusterSelString: residue 58
+433 434 435 436 437 438 439 440 441 
+clusterSelString: residue 59
+442 443 444 445 446 447 448 449 
+clusterSelString: residue 60
+450 451 452 453 454 455 456 
+clusterSelString: residue 61
+457 458 459 460 461 
+clusterSelString: residue 62
+462 463 464 465 466 467 468 
+clusterSelString: residue 63
+469 470 471 472 473 474 475 476 477 
+clusterSelString: residue 64
+478 479 480 481 482 483 484 485 
+clusterSelString: residue 65
+486 487 488 489 490 491 492 493 494 495 496 
+clusterSelString: residue 66
+497 498 499 500 501 502 
+clusterSelString: residue 67
+503 504 505 506 507 508 
+clusterSelString: residue 68
+509 510 511 512 513 514 515 516 517 518 519 
+clusterSelString: residue 69
+520 521 522 523 524 525 526 527 
+clusterSelString: residue 70
+528 529 530 531 532 533 534 535 536 
+clusterSelString: residue 71
+537 538 539 540 541 542 543 544 545 
+clusterSelString: residue 72
+546 547 548 549 550 551 
+clusterSelString: residue 73
+552 553 554 555 556 557 558 559 560 561 562 563 564 565 
+clusterSelString: residue 74
+566 567 568 569 570 571 572 573 574 575 576 
+clusterSelString: residue 75
+577 578 579 580 581 582 583 584 585 586 587 
+clusterSelString: residue 76
+588 589 590 591 592 593 594 595 596 
+clusterSelString: residue 77
+597 598 599 600 601 602 603 
+clusterSelString: residue 78
+604 605 606 607 608 609 610 611 612 
+clusterSelString: residue 79
+613 614 615 616 617 618 619 620 
+clusterSelString: residue 80
+621 622 623 624 625 626 627 628 629 630 631 632 
+clusterSelString: residue 81
+633 634 635 636 637 638 639 640 
+clusterSelString: residue 82
+641 642 643 644 645 646 647 
+clusterSelString: residue 83
+648 649 650 651 652 653 654 
+clusterSelString: residue 84
+655 656 657 658 659 660 661 662 
+clusterSelString: residue 85
+663 664 665 666 667 668 669 670 
+clusterSelString: residue 86
+671 672 673 674 675 676 677 678 679 680 681 
+clusterSelString: residue 87
+682 683 684 685 686 687 688 689 690 691 
+clusterSelString: residue 88
+692 693 694 695 696 697 698 699 700 
+clusterSelString: residue 89
+701 702 703 704 705 706 707 708 
+clusterSelString: residue 90
+709 710 711 712 713 714 715 716 
+clusterSelString: residue 91
+717 718 719 720 721 722 723 724 
+clusterSelString: residue 92
+725 726 727 728 
+clusterSelString: residue 93
+729 730 731 732 733 734 735 736 737 738 739 
+clusterSelString: residue 94
+740 741 742 743 744 745 746 747 
+clusterSelString: residue 95
+748 749 750 751 752 
+clusterSelString: residue 96
+753 754 755 756 757 758 
+clusterSelString: residue 97
+759 760 761 762 763 764 765 766 
+clusterSelString: residue 98
+767 768 769 770 771 772 773 774 
+clusterSelString: residue 99
+775 776 777 778 779 780 781 
+clusterSelString: residue 100
+782 783 784 785 786 787 
+clusterSelString: residue 101
+788 789 790 791 792 793 794 795 796 797 798 
+clusterSelString: residue 102
+799 800 801 802 803 804 805 806 807 808 
+clusterSelString: residue 103
+809 810 811 812 813 814 
+clusterSelString: residue 104
+815 816 817 818 819 820 
+clusterSelString: residue 105
+821 822 823 824 825 826 827 
+clusterSelString: residue 106
+828 829 830 831 832 833 834 835 836 
+clusterSelString: residue 107
+837 838 839 840 841 842 843 844 
+clusterSelString: residue 108
+845 846 847 848 849 850 851 852 853 854 855 856 857 858 
+clusterSelString: residue 109
+859 860 861 862 863 864 865 866 
+clusterSelString: residue 110
+867 868 869 870 871 872 873 874 
+clusterSelString: residue 111
+875 876 877 878 879 880 881 
+clusterSelString: residue 112
+882 883 884 885 886 887 888 889 890 891 
+clusterSelString: residue 113
+892 893 894 895 896 897 898 899 900 901 902 903 
+clusterSelString: residue 114
+904 905 906 907 908 909 910 911 912 913 
+clusterSelString: residue 115
+914 915 916 917 918 919 920 921 922 
+clusterSelString: residue 116
+923 924 925 926 927 928 929 930 
+clusterSelString: residue 117
+931 932 933 934 
+clusterSelString: residue 118
+935 936 937 938 939 940 
+clusterSelString: residue 119
+941 942 943 944 945 946 947 948 
+clusterSelString: residue 120
+949 950 951 952 953 954 955 956 957 958 959 960 
+clusterSelString: residue 121
+961 962 963 964 965 966 967 968 
+clusterSelString: residue 122
+969 970 971 972 973 974 975 976 977 978 979 980 
+clusterSelString: residue 123
+981 982 983 984 985 986 987 988 
+clusterSelString: residue 124
+989 990 991 992 993 994 995 996 997 
+clusterSelString: residue 125
+998 999 1000 1001 1002 1003 1004 1005 
+clusterSelString: residue 126
+1006 1007 1008 1009 1010 1011 1012 
+clusterSelString: residue 127
+1013 1014 1015 1016 1017 1018 1019 
+clusterSelString: residue 128
+1020 1021 1022 1023 1024 1025 1026 1027 
+clusterSelString: residue 129
+1028 1029 1030 1031 1032 1033 1034 1035 
+clusterSelString: residue 130
+1036 1037 1038 1039 1040 1041 1042 
+clusterSelString: residue 131
+1043 1044 1045 1046 1047 1048 1049 
+clusterSelString: residue 132
+1050 1051 1052 1053 1054 1055 
+clusterSelString: residue 133
+1056 1057 1058 1059 1060 1061 
+clusterSelString: residue 134
+1062 1063 1064 1065 1066 1067 1068 1069 
+clusterSelString: residue 135
+1070 1071 1072 1073 1074 1075 1076 1077 1078 1079 1080 
+clusterSelString: residue 136
+1081 1082 1083 1084 1085 1086 1087 1088 
+clusterSelString: residue 137
+1089 1090 1091 1092 1093 1094 1095 
+clusterSelString: residue 138
+1096 1097 1098 1099 1100 1101 1102 1103 
+clusterSelString: residue 139
+1104 1105 1106 1107 1108 1109 
+clusterSelString: residue 140
+1110 1111 1112 1113 1114 1115 1116 1117 
+clusterSelString: residue 141
+1118 1119 1120 1121 1122 
+clusterSelString: residue 142
+1123 1124 1125 1126 1127 1128 
+clusterSelString: residue 143
+1129 1130 1131 1132 
+clusterSelString: residue 144
+1133 1134 1135 1136 1137 1138 1139 1140 
+clusterSelString: residue 145
+1141 1142 1143 1144 1145 
+clusterSelString: residue 146
+1146 1147 1148 1149 1150 1151 1152 1153 1154 1155 
+clusterSelString: residue 147
+1156 1157 1158 1159 1160 1161 1162 1163 
+clusterSelString: residue 148
+1164 1165 1166 1167 1168 1169 1170 1171 1172 1173 
+clusterSelString: residue 149
+1174 1175 1176 1177 1178 1179 1180 1181 
+clusterSelString: residue 150
+1182 1183 1184 1185 1186 1187 1188 1189 1190 
+clusterSelString: residue 151
+1191 1192 1193 1194 1195 1196 1197 1198 
+clusterSelString: residue 152
+1199 1200 1201 1202 1203 1204 1205 1206 1207 1208 1209 
+clusterSelString: residue 153
+1210 1211 1212 1213 
+clusterSelString: residue 154
+1214 1215 1216 1217 1218 1219 1220 
+clusterSelString: residue 155
+1221 1222 1223 1224 1225 1226 1227 1228 1229 
+clusterSelString: residue 156
+1230 1231 1232 1233 
+clusterSelString: residue 157
+1234 1235 1236 1237 1238 1239 1240 1241 1242 
+clusterSelString: residue 158
+1243 1244 1245 1246 1247 1248 1249 
+clusterSelString: residue 159
+1250 1251 1252 1253 1254 
+clusterSelString: residue 160
+1255 1256 1257 1258 1259 1260 1261 1262 
+clusterSelString: residue 161
+1263 1264 1265 1266 1267 
+clusterSelString: residue 162
+1268 1269 1270 1271 1272 1273 1274 1275 1276 1277 
+clusterSelString: residue 163
+1278 1279 1280 1281 1282 1283 1284 1285 1286 1287 1288 
+clusterSelString: residue 164
+1289 1290 1291 1292 1293 1294 1295 1296 
+clusterSelString: residue 165
+1297 1298 1299 1300 1301 1302 1303 1304 
+clusterSelString: residue 166
+1305 1306 1307 1308 1309 1310 1311 1312 1313 
+clusterSelString: residue 167
+1314 1315 1316 1317 1318 1319 
+clusterSelString: residue 168
+1320 1321 1322 1323 1324 1325 1326 1327 1328 
+clusterSelString: residue 169
+1329 1330 1331 1332 1333 1334 1335 1336 
+clusterSelString: residue 170
+1337 1338 1339 1340 1341 1342 1343 1344 
+clusterSelString: residue 171
+1345 1346 1347 1348 1349 1350 1351 1352 
+clusterSelString: residue 172
+1353 1354 1355 1356 1357 1358 1359 
+clusterSelString: residue 173
+1360 1361 1362 1363 1364 1365 1366 1367 1368 
+clusterSelString: residue 174
+1369 1370 1371 1372 1373 1374 1375 1376 1377 
+clusterSelString: residue 175
+1378 1379 1380 1381 1382 1383 1384 1385 
+clusterSelString: residue 176
+1386 1387 1388 1389 
+clusterSelString: residue 177
+1390 1391 1392 1393 1394 1395 1396 1397 1398 
+clusterSelString: residue 178
+1399 1400 1401 1402 1403 1404 
+clusterSelString: residue 179
+1405 1406 1407 1408 1409 1410 
+clusterSelString: residue 180
+1411 1412 1413 1414 1415 1416 1417 1418 
+clusterSelString: residue 181
+1419 1420 1421 1422 1423 
+clusterSelString: residue 182
+1424 1425 1426 1427 1428 1429 1430 1431 
+clusterSelString: residue 183
+1432 1433 1434 1435 1436 1437 1438 1439 
+clusterSelString: residue 184
+1440 1441 1442 1443 
+clusterSelString: residue 185
+1444 1445 1446 1447 1448 1449 1450 1451 
+clusterSelString: residue 186
+1452 1453 1454 1455 1456 
+clusterSelString: residue 187
+1457 1458 1459 1460 1461 1462 1463 
+clusterSelString: residue 188
+1464 1465 1466 1467 1468 1469 1470 1471 
+clusterSelString: residue 189
+1472 1473 1474 1475 1476 1477 1478 1479 1480 1481 
+clusterSelString: residue 190
+1482 1483 1484 1485 1486 1487 
+clusterSelString: residue 191
+1488 1489 1490 1491 1492 1493 1494 1495 1496 
+clusterSelString: residue 192
+1497 1498 1499 1500 1501 1502 
+clusterSelString: residue 193
+1503 1504 1505 1506 1507 1508 1509 
+clusterSelString: residue 194
+1510 1511 1512 1513 1514 1515 1516 1517 
+clusterSelString: residue 195
+1518 1519 1520 1521 1522 1523 1524 1525 1526 
+clusterSelString: residue 196
+1527 1528 1529 1530 1531 1532 1533 1534 
+clusterSelString: residue 197
+1535 1536 1537 1538 1539 1540 1541 1542 
+clusterSelString: residue 198
+1543 1544 1545 1546 1547 1548 1549 
+clusterSelString: residue 199
+1550 1551 1552 1553 
+clusterSelString: residue 200
+1554 1555 1556 1557 1558 1559 1560 1561 
+clusterSelString: residue 201
+1562 1563 1564 1565 1566 1567 1568 1569 
+clusterSelString: residue 202
+1570 1571 1572 1573 1574 1575 1576 
+clusterSelString: residue 203
+1577 1578 1579 1580 1581 1582 1583 1584 1585 1586 1587 
+clusterSelString: residue 204
+1588 1589 1590 1591 1592 1593 1594 
+clusterSelString: residue 205
+1595 1596 1597 1598 
+clusterSelString: residue 206
+1599 1600 1601 1602 1603 1604 1605 
+clusterSelString: residue 207
+1606 1607 1608 1609 1610 1611 1612 1613 1614 
+clusterSelString: residue 208
+1615 1616 1617 1618 1619 1620 1621 1622 1623 1624 1625 
+clusterSelString: residue 209
+1626 1627 1628 1629 1630 1631 1632 1633 1634 1635 1636 1637 
+clusterSelString: residue 210
+1638 1639 1640 1641 1642 1643 1644 1645 
+clusterSelString: residue 211
+1646 1647 1648 1649 1650 
+clusterSelString: residue 212
+1651 1652 1653 1654 1655 1656 1657 
+clusterSelString: residue 213
+1658 1659 1660 1661 1662 1663 1664 1665 1666 
+clusterSelString: residue 214
+1667 1668 1669 1670 1671 1672 1673 
+clusterSelString: residue 215
+1674 1675 1676 1677 1678 1679 1680 1681 
+clusterSelString: residue 216
+1682 1683 1684 1685 1686 1687 1688 1689 
+clusterSelString: residue 217
+1690 1691 1692 1693 1694 1695 1696 1697 1698 
+clusterSelString: residue 218
+1699 1700 1701 1702 1703 1704 1705 
+clusterSelString: residue 219
+1706 1707 1708 1709 1710 1711 1712 1713 
+clusterSelString: residue 220
+1714 1715 1716 1717 1718 1719 1720 1721 1722 
+clusterSelString: residue 221
+1723 1724 1725 1726 1727 1728 1729 
+clusterSelString: residue 222
+1730 1731 1732 1733 1734 1735 1736 1737 
+clusterSelString: residue 223
+1738 1739 1740 1741 1742 1743 
+clusterSelString: residue 224
+1744 1745 1746 1747 1748 1749 1750 1751 1752 1753 1754 
+clusterSelString: residue 225
+1755 1756 1757 1758 1759 1760 1761 1762 
+clusterSelString: residue 226
+1763 1764 1765 1766 1767 1768 
+clusterSelString: residue 227
+1769 1770 1771 1772 1773 1774 1775 1776 1777 1778 1779 1780 
+clusterSelString: residue 228
+1781 1782 1783 1784 1785 1786 1787 1788 1789 
+clusterSelString: residue 229
+1790 1791 1792 1793 1794 1795 1796 1797 1798 1799 1800 
+clusterSelString: residue 230
+1801 1802 1803 1804 1805 1806 1807 
+clusterSelString: residue 231
+1808 1809 1810 1811 1812 1813 1814 1815 
+clusterSelString: residue 232
+1816 1817 1818 1819 1820 1821 1822 1823 
+clusterSelString: residue 233
+1824 1825 1826 1827 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 
+clusterSelString: residue 234
+1838 1839 1840 1841 1842 
+clusterSelString: residue 235
+1843 1844 1845 1846 1847 1848 1849 1850 1851 1852 1853 
+clusterSelString: residue 236
+1854 1855 1856 1857 
+clusterSelString: residue 237
+1858 1859 1860 1861 1862 1863 1864 1865 
+clusterSelString: residue 238
+1866 1867 1868 1869 1870 1871 1872 
+clusterSelString: residue 239
+1873 1874 1875 1876 1877 1878 1879 1880 
+clusterSelString: residue 240
+1881 1882 1883 1884 1885 1886 1887 1888 1889 1890 1891 1892 1893 1894 
+clusterSelString: residue 241
+1895 1896 1897 1898 1899 1900 1901 1902 1903 
+clusterSelString: residue 242
+1904 1905 1906 1907 1908 1909 1910 
+clusterSelString: residue 243
+1911 1912 1913 1914 1915 
+clusterSelString: residue 244
+1916 1917 1918 1919 1920 1921 1922 1923 1924 1925 1926 
+clusterSelString: residue 245
+1927 1928 1929 1930 1931 1932 1933 1934 1935 1936 1937 
+clusterSelString: residue 246
+1938 1939 1940 1941 1942 1943 1944 1945 
+clusterSelString: residue 247
+1946 1947 1948 1949 1950 1951 1952 
+clusterSelString: residue 248
+1953 1954 1955 1956 1957 1958 
+clusterSelString: residue 249
+1959 1960 1961 1962 1963 1964 1965 1966 
+clusterSelString: residue 250
+1967 1968 1969 1970 
+clusterSelString: residue 251
+1971 1972 1973 1974 1975 1976 1977 1978 
+clusterSelString: residue 252
+1979 1980 1981 1982 1983 1984 1985 
+clusterSelString: residue 253
+1986 1987 1988 1989 1990 1991 1992 1993 1994 
+clusterSelString: residue 254
+1995 1996 1997 1998 1999 2000 2001 2002 
+clusterSelString: residue 255
+2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 
+clusterSelString: residue 256
+2015 2016 2017 2018 2019 2020 2021 2022 2023 
+clusterSelString: residue 257
+2024 2025 2026 2027 2028 2029 2030 
+clusterSelString: residue 258
+2031 2032 2033 2034 2035 2036 2037 
+clusterSelString: residue 259
+2038 2039 2040 2041 2042 2043 2044 2045 2046 2047 2048 
+clusterSelString: residue 260
+2049 2050 2051 2052 2053 2054 2055 2056 2057 2058 2059 2060 
+clusterSelString: residue 261
+2061 2062 2063 2064 2065 2066 2067 2068 
+clusterSelString: residue 262
+2069 2070 2071 2072 2073 2074 2075 
+clusterSelString: residue 263
+2076 2077 2078 2079 2080 2081 2082 
+clusterSelString: residue 264
+2083 2084 2085 2086 2087 2088 2089 
+clusterSelString: residue 265
+2090 2091 2092 2093 2094 2095 2096 2097 
+clusterSelString: residue 266
+2098 2099 2100 2101 2102 2103 2104 2105 
+clusterSelString: residue 267
+2106 2107 2108 2109 2110 2111 2112 
+clusterSelString: residue 268
+2113 2114 2115 2116 2117 2118 
+clusterSelString: residue 269
+2119 2120 2121 2122 2123 2124 2125 2126 2127 2128 2129 
+clusterSelString: residue 270
+2130 2131 2132 2133 2134 2135 2136 2137 2138 
+clusterSelString: residue 271
+2139 2140 2141 2142 2143 2144 2145 2146 
+clusterSelString: residue 272
+2147 2148 2149 2150 2151 2152 2153 2154 
+clusterSelString: residue 273
+2155 2156 2157 2158 2159 2160 2161 2162 2163 2164 2165 
+clusterSelString: residue 274
+2166 2167 2168 2169 2170 2171 2172 2173 2174 
+clusterSelString: residue 275
+2175 2176 2177 2178 2179 2180 2181 
+clusterSelString: residue 276
+2182 2183 2184 2185 2186 2187 2188 
+clusterSelString: residue 277
+2189 2190 2191 2192 2193 2194 
+clusterSelString: residue 278
+2195 2196 2197 2198 2199 2200 2201 
+clusterSelString: residue 279
+2202 2203 2204 2205 2206 2207 2208 2209 
+clusterSelString: residue 280
+2210 2211 2212 2213 2214 2215 2216 2217 2218 
+clusterSelString: residue 281
+2219 2220 2221 2222 2223 2224 2225 2226 2227 
+clusterSelString: residue 282
+2228 2229 2230 2231 2232 2233 2234 2235 2236 2237 2238 
+clusterSelString: residue 283
+2239 2240 2241 2242 2243 2244 2245 
+clusterSelString: residue 284
+2246 2247 2248 2249 2250 2251 2252 2253 
+clusterSelString: residue 285
+2254 2255 2256 2257 2258 2259 2260 2261 
+clusterSelString: residue 286
+2262 2263 2264 2265 2266 2267 2268 
+clusterSelString: residue 287
+2269 2270 2271 2272 2273 2274 2275 2276 
+clusterSelString: residue 288
+2277 2278 2279 2280 2281 2282 2283 2284 2285 2286 2287 
+clusterSelString: residue 289
+2288 2289 2290 2291 2292 2293 2294 2295 2296 2297 2298 2299 2300 2301 
+clusterSelString: residue 290
+2302 2303 2304 2305 2306 2307 2308 2309 2310 2311 2312 
+clusterSelString: residue 291
+2313 2314 2315 2316 2317 2318 
+clusterSelString: residue 292
+2319 2320 2321 2322 2323 2324 2325 2326 
+clusterSelString: residue 293
+2327 2328 2329 2330 2331 2332 2333 
+clusterSelString: residue 294
+2334 2335 2336 2337 2338 2339 2340 
+clusterSelString: residue 295
+2341 2342 2343 2344 2345 2346 2347 2348 
+clusterSelString: residue 296
+2349 2350 2351 2352 2353 2354 2355 
+clusterSelString: residue 297
+2356 2357 2358 2359 2360 2361 
+clusterSelString: residue 298
+2362 2363 2364 2365 2366 2367 2368 2369 
+clusterSelString: residue 299
+2370 2371 2372 2373 2374 
+clusterSelString: residue 300
+2375 2376 2377 2378 2379 2380 2381 2382 2383 
+clusterSelString: residue 301
+2384 2385 2386 2387 2388 2389 2390 2391 
+clusterSelString: residue 302
+2392 2393 2394 2395 2396 2397 2398 2399 
+clusterSelString: residue 303
+2400 2401 2402 2403 2404 2405 2406 2407 2408 
+clusterSelString: residue 304
+2409 2410 2411 2412 2413 2414 2415 2416 2417 
+clusterSelString: residue 305
+2418 2419 2420 2421 2422 2423 
+clusterSelString: residue 306
+2424 2425 2426 2427 2428 2429 2430 2431 2432 2433 2434 2435 2436 2437 
+clusterSelString: residue 307
+2438 2439 2440 2441 2442 2443 2444 2445 2446 2447 2448 2449 
+clusterSelString: residue 308
+2450 2451 2452 2453 2454 2455 2456 2457 2458 
+clusterSelString: residue 309
+2459 2460 2461 2462 2463 2464 2465 2466 
+clusterSelString: residue 310
+2467 2468 2469 2470 2471 2472 2473 
+clusterSelString: residue 311
+2474 2475 2476 2477 2478 2479 
+clusterSelString: residue 312
+2480 2481 2482 2483 2484 
+clusterSelString: residue 313
+2485 2486 2487 2488 2489 2490 2491 2492 2493 2494 2495 
+clusterSelString: residue 314
+2496 2497 2498 2499 2500 2501 2502 2503 
+clusterSelString: residue 315
+2504 2505 2506 2507 2508 2509 2510 
+clusterSelString: residue 316
+2511 2512 2513 2514 2515 
+clusterSelString: residue 317
+2516 2517 2518 2519 2520 2521 2522 2523 
+clusterSelString: residue 318
+2524 2525 2526 2527 2528 2529 2530 2531 2532 2533 2534 
+clusterSelString: residue 319
+2535 2536 2537 2538 2539 2540 2541 2542 
+clusterSelString: residue 320
+2543 2544 2545 2546 2547 2548 2549 2550 2551 
+clusterSelString: residue 321
+2552 2553 2554 2555 2556 2557 2558 2559 2560 
+clusterSelString: residue 322
+2561 2562 2563 2564 2565 2566 2567 
+clusterSelString: residue 323
+2568 2569 2570 2571 2572 2573 2574 2575 
+clusterSelString: residue 324
+2576 2577 2578 2579 2580 2581 2582 
+clusterSelString: residue 325
+2583 2584 2585 2586 2587 2588 2589 2590 2591 
+clusterSelString: residue 326
+2592 2593 2594 2595 2596 2597 2598 2599 
+clusterSelString: residue 327
+2600 2601 2602 2603 2604 2605 2606 2607 2608 
+clusterSelString: residue 328
+2609 2610 2611 2612 
+clusterSelString: residue 329
+2613 2614 2615 2616 2617 2618 2619 
+clusterSelString: residue 330
+2620 2621 2622 2623 2624 2625 2626 2627 2628 
+clusterSelString: residue 331
+2629 2630 2631 2632 2633 2634 2635 
+clusterSelString: residue 332
+2636 2637 2638 2639 2640 2641 2642 2643 2644 
+clusterSelString: residue 333
+2645 2646 2647 2648 2649 2650 2651 
+clusterSelString: residue 334
+2652 2653 2654 2655 2656 2657 2658 2659 
+clusterSelString: residue 335
+2660 2661 2662 2663 2664 2665 
+clusterSelString: residue 336
+2666 2667 2668 2669 2670 2671 2672 
+clusterSelString: residue 337
+2673 2674 2675 2676 
+clusterSelString: residue 338
+2677 2678 2679 2680 2681 2682 2683 2684 
+clusterSelString: residue 339
+2685 2686 2687 2688 
+clusterSelString: residue 340
+2689 2690 2691 2692 2693 2694 2695 2696 2697 2698 2699 
+clusterSelString: residue 341
+2700 2701 2702 2703 2704 2705 2706 
+clusterSelString: residue 342
+2707 2708 2709 2710 2711 2712 2713 2714 2715 2716 2717 
+clusterSelString: residue 343
+2718 2719 2720 2721 2722 2723 2724 
+clusterSelString: residue 344
+2725 2726 2727 2728 2729 2730 2731 2732 2733 
+clusterSelString: residue 345
+2734 2735 2736 2737 2738 2739 2740 2741 2742 2743 2744 
+clusterSelString: residue 346
+2745 2746 2747 2748 
+clusterSelString: residue 347
+2749 2750 2751 2752 2753 2754 2755 2756 2757 
+clusterSelString: residue 348
+2758 2759 2760 2761 2762 2763 2764 
+clusterSelString: residue 349
+2765 2766 2767 2768 2769 2770 
+clusterSelString: residue 350
+2771 2772 2773 2774 2775 2776 2777 
+clusterSelString: residue 351
+2778 2779 2780 2781 2782 2783 2784 
+clusterSelString: residue 352
+2785 2786 2787 2788 2789 2790 2791 2792 2793 2794 
+clusterSelString: residue 353
+2795 2796 2797 2798 2799 2800 2801 2802 2803 2804 2805 2806 
+clusterSelString: residue 354
+2807 2808 2809 2810 2811 2812 2813 
+clusterSelString: residue 355
+2814 2815 2816 2817 
+clusterSelString: residue 356
+2818 2819 2820 2821 2822 2823 2824 2825 
+clusterSelString: residue 357
+2826 2827 2828 2829 2830 2831 2832 2833 
+clusterSelString: residue 358
+2834 2835 2836 2837 2838 2839 2840 2841 2842 
+clusterSelString: residue 359
+2843 2844 2845 2846 2847 2848 2849 2850 
+clusterSelString: residue 360
+2851 2852 2853 2854 
+clusterSelString: residue 361
+2855 2856 2857 2858 2859 2860 2861 2862 2863 
+clusterSelString: residue 362
+2864 2865 2866 2867 2868 2869 2870 2871 2872 
+clusterSelString: residue 363
+2873 2874 2875 2876 2877 2878 2879 2880 2881 2882 2883 
+clusterSelString: residue 364
+2884 2885 2886 2887 2888 2889 2890 2891 
+clusterSelString: residue 365
+2892 2893 2894 2895 2896 2897 
+clusterSelString: residue 366
+2898 2899 2900 2901 2902 2903 
+clusterSelString: residue 367
+2904 2905 2906 2907 2908 2909 2910 2911 2912 2913 2914 
+clusterSelString: residue 368
+2915 2916 2917 2918 2919 2920 2921 2922 
+clusterSelString: residue 369
+2923 2924 2925 2926 2927 2928 2929 2930 2931 2932 2933 
+clusterSelString: residue 370
+2934 2935 2936 2937 2938 2939 2940 2941 
+clusterSelString: residue 371
+2942 2943 2944 2945 2946 2947 2948 2949 2950 
+clusterSelString: residue 372
+2951 2952 2953 2954 2955 2956 2957 
+clusterSelString: residue 373
+2958 2959 2960 2961 2962 2963 2964 2965 2966 2967 2968 
+clusterSelString: residue 374
+2969 2970 2971 2972 2973 2974 2975 2976 2977 
+clusterSelString: residue 375
+2978 2979 2980 2981 2982 2983 2984 2985 2986 2987 2988 
+clusterSelString: residue 376
+2989 2990 2991 2992 2993 2994 2995 2996 
+clusterSelString: residue 377
+2997 2998 2999 3000 3001 3002 3003 3004 
+clusterSelString: residue 378
+3005 3006 3007 3008 
+clusterSelString: residue 379
+3009 3010 3011 3012 3013 3014 3015 3016 3017 
+clusterSelString: residue 380
+3018 3019 3020 3021 3022 3023 3024 3025 3026 
+clusterSelString: residue 381
+3027 3028 3029 3030 3031 3032 3033 3034 3035 
+clusterSelString: residue 382
+3036 3037 3038 3039 3040 3041 3042 
+clusterSelString: residue 383
+3043 3044 3045 3046 3047 3048 3049 3050 
+clusterSelString: residue 384
+3051 3052 3053 3054 3055 3056 3057 3058 3059 3060 3061 
+clusterSelString: residue 385
+3062 3063 3064 3065 
+clusterSelString: residue 386
+3066 3067 3068 3069 3070 3071 3072 3073 3074 3075 3076 3077 3078 3079 
+clusterSelString: residue 387
+3080 3081 3082 3083 3084 3085 3086 3087 3088 
+clusterSelString: residue 388
+3089 3090 3091 3092 3093 3094 3095 3096 3097 
+clusterSelString: residue 389
+3098 3099 3100 3101 
+clusterSelString: residue 390
+3102 3103 3104 3105 3106 3107 3108 
+clusterSelString: residue 391
+3109 3110 3111 3112 3113 
+clusterSelString: residue 392
+3114 3115 3116 3117 3118 3119 3120 3121 3122 
+clusterSelString: residue 393
+3123 3124 3125 3126 3127 3128 3129 3130 
+clusterSelString: residue 394
+3131 3132 3133 3134 3135 3136 
+clusterSelString: residue 395
+3137 3138 3139 3140 3141 3142 3143 
+clusterSelString: residue 396
+3144 3145 3146 3147 
+clusterSelString: residue 397
+3148 3149 3150 3151 3152 3153 3154 3155 3156 
+clusterSelString: residue 398
+3157 3158 3159 3160 3161 3162 3163 3164 3165 3166 3167 
+clusterSelString: residue 399
+3168 3169 3170 3171 3172 
+clusterSelString: residue 400
+3173 3174 3175 3176 3177 3178 3179 3180 3181 
+clusterSelString: residue 401
+3182 3183 3184 3185 3186 3187 3188 3189 
+clusterSelString: residue 402
+3190 3191 3192 3193 3194 3195 3196 
+clusterSelString: residue 403
+3197 3198 3199 3200 3201 3202 3203 3204 
+clusterSelString: residue 404
+3205 3206 3207 3208 3209 3210 
+clusterSelString: residue 405
+3211 3212 3213 3214 3215 3216 3217 
+clusterSelString: residue 406
+3218 3219 3220 3221 3222 3223 3224 3225 
+clusterSelString: residue 407
+3226 3227 3228 3229 3230 3231 3232 3233 3234 3235 3236 3237 
+clusterSelString: residue 408
+3238 3239 3240 3241 3242 
+clusterSelString: residue 409
+3243 3244 3245 3246 3247 3248 3249 3250 3251 3252 3253 3254 
+clusterSelString: residue 410
+3255 3256 3257 3258 
+clusterSelString: residue 411
+3259 3260 3261 3262 3263 
+clusterSelString: residue 412
+3264 3265 3266 3267 3268 3269 3270 
+clusterSelString: residue 413
+3271 3272 3273 3274 
+clusterSelString: residue 414
+3275 3276 3277 3278 3279 3280 3281 3282 3283 3284 
+clusterSelString: residue 415
+3285 3286 3287 3288 3289 3290 3291 
+clusterSelString: residue 416
+3292 3293 3294 3295 
+clusterSelString: residue 417
+3296 3297 3298 3299 3300 3301 3302 3303 
+clusterSelString: residue 418
+3304 3305 3306 3307 3308 3309 3310 3311 
+clusterSelString: residue 419
+3312 3313 3314 3315 3316 3317 3318 
+clusterSelString: residue 420
+3319 3320 3321 3322 3323 3324 3325 
+clusterSelString: residue 421
+3326 3327 3328 3329 3330 3331 3332 3333 3334 3335 
+clusterSelString: residue 422
+3336 3337 3338 3339 3340 
+clusterSelString: residue 423
+3341 3342 3343 3344 3345 3346 3347 
+clusterSelString: residue 424
+3348 3349 3350 3351 3352 3353 3354 3355 
+clusterSelString: residue 425
+3356 3357 3358 3359 3360 3361 3362 
+clusterSelString: residue 426
+3363 3364 3365 3366 3367 3368 3369 3370 3371 3372 3373 
+clusterSelString: residue 427
+3374 3375 3376 3377 3378 3379 3380 3381 
+clusterSelString: residue 428
+3382 3383 3384 3385 3386 3387 3388 
+clusterSelString: residue 429
+3389 3390 3391 3392 3393 3394 3395 3396 3397 
+clusterSelString: residue 430
+3398 3399 3400 3401 3402 3403 3404 3405 
+clusterSelString: residue 431
+3406 3407 3408 3409 3410 3411 3412 3413 
+clusterSelString: residue 432
+3414 3415 3416 3417 3418 3419 3420 3421 3422 
+clusterSelString: residue 433
+3423 3424 3425 3426 3427 3428 3429 3430 
+clusterSelString: residue 434
+3431 3432 3433 3434 3435 3436 3437 3438 3439 3440 
+<prepareNodeMap
+restriction: notSameResidue
+restriction: notNeighboringCAlpha
+  residue1: 0, residue2: 1
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 1, residue2: 2
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 2, residue2: 3
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 3, residue2: 4
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 4, residue2: 5
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 5, residue2: 6
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 6, residue2: 7
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 7, residue2: 8
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 8, residue2: 9
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 9, residue2: 10
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 10, residue2: 11
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 11, residue2: 12
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 12, residue2: 13
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 13, residue2: 14
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 14, residue2: 15
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 15, residue2: 16
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 16, residue2: 17
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 17, residue2: 18
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 18, residue2: 19
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 19, residue2: 20
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 20, residue2: 21
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 21, residue2: 22
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 22, residue2: 23
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 23, residue2: 24
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 24, residue2: 25
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 25, residue2: 26
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 26, residue2: 27
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 27, residue2: 28
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 28, residue2: 29
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 29, residue2: 30
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 30, residue2: 31
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 31, residue2: 32
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 32, residue2: 33
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 33, residue2: 34
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 34, residue2: 35
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 35, residue2: 36
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 36, residue2: 37
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 37, residue2: 38
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 38, residue2: 39
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 39, residue2: 40
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 40, residue2: 41
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 41, residue2: 42
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 42, residue2: 43
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 43, residue2: 44
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 44, residue2: 45
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 45, residue2: 46
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 46, residue2: 47
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 47, residue2: 48
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 48, residue2: 49
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 49, residue2: 50
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 50, residue2: 51
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 51, residue2: 52
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 52, residue2: 53
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 53, residue2: 54
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 54, residue2: 55
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 55, residue2: 56
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 56, residue2: 57
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 57, residue2: 58
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 58, residue2: 59
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 59, residue2: 60
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 60, residue2: 61
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 61, residue2: 62
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 62, residue2: 63
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 63, residue2: 64
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 64, residue2: 65
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 65, residue2: 66
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 66, residue2: 67
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 67, residue2: 68
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 68, residue2: 69
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 69, residue2: 70
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 70, residue2: 71
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 71, residue2: 72
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 72, residue2: 73
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 73, residue2: 74
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 74, residue2: 75
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 75, residue2: 76
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 76, residue2: 77
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 77, residue2: 78
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 78, residue2: 79
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 79, residue2: 80
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 80, residue2: 81
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 81, residue2: 82
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 82, residue2: 83
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 83, residue2: 84
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 84, residue2: 85
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 85, residue2: 86
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 86, residue2: 87
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 87, residue2: 88
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 88, residue2: 89
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 89, residue2: 90
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 90, residue2: 91
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 91, residue2: 92
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 92, residue2: 93
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 93, residue2: 94
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 94, residue2: 95
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 95, residue2: 96
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 96, residue2: 97
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 97, residue2: 98
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 98, residue2: 99
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 99, residue2: 100
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 100, residue2: 101
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 101, residue2: 102
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 102, residue2: 103
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 103, residue2: 104
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 104, residue2: 105
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 105, residue2: 106
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 106, residue2: 107
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 107, residue2: 108
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 108, residue2: 109
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 109, residue2: 110
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 110, residue2: 111
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 111, residue2: 112
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 112, residue2: 113
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 113, residue2: 114
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 114, residue2: 115
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 115, residue2: 116
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 116, residue2: 117
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 117, residue2: 118
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 118, residue2: 119
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 119, residue2: 120
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 120, residue2: 121
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 121, residue2: 122
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 122, residue2: 123
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 123, residue2: 124
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 124, residue2: 125
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 125, residue2: 126
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 126, residue2: 127
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 127, residue2: 128
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 128, residue2: 129
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 129, residue2: 130
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 130, residue2: 131
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 131, residue2: 132
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 132, residue2: 133
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 133, residue2: 134
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 134, residue2: 135
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 135, residue2: 136
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 136, residue2: 137
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 137, residue2: 138
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 138, residue2: 139
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 139, residue2: 140
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 140, residue2: 141
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 141, residue2: 142
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 142, residue2: 143
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 143, residue2: 144
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 144, residue2: 145
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 145, residue2: 146
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 146, residue2: 147
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 147, residue2: 148
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 148, residue2: 149
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 149, residue2: 150
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 150, residue2: 151
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 151, residue2: 152
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 152, residue2: 153
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 153, residue2: 154
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 154, residue2: 155
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 155, residue2: 156
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 156, residue2: 157
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 157, residue2: 158
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 158, residue2: 159
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 159, residue2: 160
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 160, residue2: 161
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 161, residue2: 162
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 162, residue2: 163
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 163, residue2: 164
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 164, residue2: 165
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 165, residue2: 166
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 166, residue2: 167
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 167, residue2: 168
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 168, residue2: 169
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 169, residue2: 170
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 170, residue2: 171
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 171, residue2: 172
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 172, residue2: 173
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 173, residue2: 174
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 174, residue2: 175
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 175, residue2: 176
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 176, residue2: 177
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 177, residue2: 178
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 178, residue2: 179
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 179, residue2: 180
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 180, residue2: 181
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 181, residue2: 182
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 182, residue2: 183
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 183, residue2: 184
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 184, residue2: 185
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 185, residue2: 186
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 186, residue2: 187
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 187, residue2: 188
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 188, residue2: 189
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 189, residue2: 190
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 190, residue2: 191
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 191, residue2: 192
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 192, residue2: 193
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 193, residue2: 194
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 194, residue2: 195
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 195, residue2: 196
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 196, residue2: 197
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 197, residue2: 198
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 198, residue2: 199
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 199, residue2: 200
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 200, residue2: 201
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 201, residue2: 202
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 202, residue2: 203
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 203, residue2: 204
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 204, residue2: 205
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 205, residue2: 206
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 206, residue2: 207
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 207, residue2: 208
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 208, residue2: 209
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 209, residue2: 210
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 210, residue2: 211
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 211, residue2: 212
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 212, residue2: 213
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 213, residue2: 214
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 214, residue2: 215
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 215, residue2: 216
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 216, residue2: 217
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 217, residue2: 218
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 218, residue2: 219
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 219, residue2: 220
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 220, residue2: 221
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 221, residue2: 222
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 222, residue2: 223
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 223, residue2: 224
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 224, residue2: 225
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 225, residue2: 226
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 226, residue2: 227
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 227, residue2: 228
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 228, residue2: 229
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 229, residue2: 230
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 230, residue2: 231
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 231, residue2: 232
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 232, residue2: 233
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 233, residue2: 234
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 234, residue2: 235
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 235, residue2: 236
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 236, residue2: 237
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 237, residue2: 238
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 238, residue2: 239
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 239, residue2: 240
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 240, residue2: 241
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 241, residue2: 242
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 242, residue2: 243
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 243, residue2: 244
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 244, residue2: 245
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 245, residue2: 246
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 246, residue2: 247
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 247, residue2: 248
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 248, residue2: 249
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 249, residue2: 250
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 250, residue2: 251
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 251, residue2: 252
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 252, residue2: 253
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 253, residue2: 254
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 254, residue2: 255
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 255, residue2: 256
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 256, residue2: 257
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 257, residue2: 258
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 258, residue2: 259
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 259, residue2: 260
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 260, residue2: 261
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 261, residue2: 262
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 262, residue2: 263
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 263, residue2: 264
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 264, residue2: 265
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 265, residue2: 266
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 266, residue2: 267
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 267, residue2: 268
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 268, residue2: 269
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 269, residue2: 270
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 270, residue2: 271
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 271, residue2: 272
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 272, residue2: 273
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 273, residue2: 274
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 274, residue2: 275
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 275, residue2: 276
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 276, residue2: 277
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 277, residue2: 278
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 278, residue2: 279
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 279, residue2: 280
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 280, residue2: 281
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 281, residue2: 282
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 282, residue2: 283
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 283, residue2: 284
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 284, residue2: 285
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 285, residue2: 286
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 286, residue2: 287
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 287, residue2: 288
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 288, residue2: 289
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 289, residue2: 290
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 290, residue2: 291
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 291, residue2: 292
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 292, residue2: 293
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 293, residue2: 294
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 294, residue2: 295
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 295, residue2: 296
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 296, residue2: 297
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 297, residue2: 298
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 298, residue2: 299
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 299, residue2: 300
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 300, residue2: 301
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 301, residue2: 302
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 302, residue2: 303
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 303, residue2: 304
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 304, residue2: 305
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 305, residue2: 306
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 306, residue2: 307
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 307, residue2: 308
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 308, residue2: 309
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 309, residue2: 310
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 310, residue2: 311
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 311, residue2: 312
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 312, residue2: 313
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 313, residue2: 314
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 314, residue2: 315
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 315, residue2: 316
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 316, residue2: 317
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 317, residue2: 318
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 318, residue2: 319
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 319, residue2: 320
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 320, residue2: 321
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 321, residue2: 322
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 322, residue2: 323
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 323, residue2: 324
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 324, residue2: 325
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 325, residue2: 326
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 326, residue2: 327
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 327, residue2: 328
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 328, residue2: 329
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 329, residue2: 330
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 330, residue2: 331
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 331, residue2: 332
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 332, residue2: 333
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 333, residue2: 334
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 334, residue2: 335
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 335, residue2: 336
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 336, residue2: 337
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 337, residue2: 338
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 338, residue2: 339
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 339, residue2: 340
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 340, residue2: 341
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 341, residue2: 342
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 342, residue2: 343
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 343, residue2: 344
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 344, residue2: 345
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 345, residue2: 346
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 346, residue2: 347
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 347, residue2: 348
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 348, residue2: 349
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 349, residue2: 350
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 350, residue2: 351
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 351, residue2: 352
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 352, residue2: 353
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 353, residue2: 354
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 354, residue2: 355
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 355, residue2: 356
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 356, residue2: 357
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 357, residue2: 358
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 358, residue2: 359
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 359, residue2: 360
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 360, residue2: 361
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 361, residue2: 362
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 362, residue2: 363
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 363, residue2: 364
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 364, residue2: 365
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 365, residue2: 366
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 366, residue2: 367
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 367, residue2: 368
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 368, residue2: 369
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 369, residue2: 370
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 370, residue2: 371
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 371, residue2: 372
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 372, residue2: 373
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 373, residue2: 374
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 374, residue2: 375
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 375, residue2: 376
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 376, residue2: 377
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 377, residue2: 378
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 378, residue2: 379
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 379, residue2: 380
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 380, residue2: 381
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 381, residue2: 382
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 382, residue2: 383
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 383, residue2: 384
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 384, residue2: 385
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 385, residue2: 386
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 386, residue2: 387
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 387, residue2: 388
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 388, residue2: 389
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 389, residue2: 390
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 390, residue2: 391
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 391, residue2: 392
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 392, residue2: 393
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 393, residue2: 394
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 394, residue2: 395
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 395, residue2: 396
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 396, residue2: 397
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 397, residue2: 398
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 398, residue2: 399
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 399, residue2: 400
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 400, residue2: 401
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 401, residue2: 402
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 402, residue2: 403
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 403, residue2: 404
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 404, residue2: 405
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 405, residue2: 406
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 406, residue2: 407
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 407, residue2: 408
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 408, residue2: 409
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 409, residue2: 410
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 410, residue2: 411
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 411, residue2: 412
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 412, residue2: 413
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 413, residue2: 414
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 414, residue2: 415
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 415, residue2: 416
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 416, residue2: 417
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 417, residue2: 418
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 418, residue2: 419
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 419, residue2: 420
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 420, residue2: 421
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 421, residue2: 422
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 422, residue2: 423
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 423, residue2: 424
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 424, residue2: 425
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 425, residue2: 426
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 426, residue2: 427
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 427, residue2: 428
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 428, residue2: 429
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 429, residue2: 430
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 430, residue2: 431
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 431, residue2: 432
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 432, residue2: 433
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+  residue1: 433, residue2: 434
+  chain1: P, chain2: P
+  name1: CA, name2: CA
+restriction: notNeighboringResidue
+<getAdjacencyMatrix
+Info) Coordinate I/O rate 0.02 frames/sec, 0 MB/sec, 60.0 sec
+Info) Finished with coordinate file ../Q207E.aligned.4.dcd.
+Info) VMD for LINUXAMD64, version 1.9.2 (December 29, 2014)
+Info) Exiting normally.

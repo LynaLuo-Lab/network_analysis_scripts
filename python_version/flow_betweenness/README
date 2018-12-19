@@ -1,0 +1,15 @@
+This folder contains three relevant items
+1) A python notebook illustrating the process (good for interactive learning)
+2) A python script version of the notebook (must be modified to use on an arbitrary matrix)
+3) A python script version that takes 4 command line arguments
+	-the name of the input matrix file
+	-the name of the desired output flow betweenness matrix file
+	-a quoted space separated list of source nodes. i.e. '1 2 3 4'
+	-a quoted space separated list of target nodes. i.e. '5 6 7 8'
+
+Note, these scripts assume that input matrix contains a set of normalized non-negative
+interaction values. E.g. all values should be between 0 and 1 with 1 corresponding to
+maximal (lossless) interaction.
+
+The 'trajectoryData' directory contains all the files needed to generate the
+test case matrix here (contact.absCorr) using the VMD networkView plugin.

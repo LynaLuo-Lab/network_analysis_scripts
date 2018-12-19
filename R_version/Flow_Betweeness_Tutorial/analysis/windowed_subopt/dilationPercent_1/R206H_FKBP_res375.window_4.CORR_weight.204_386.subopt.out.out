@@ -1,0 +1,29 @@
+The shortest distance is here 472
+The edge length offset is 4
+Suboptimal paths will be no longer than 476
+The sources are: 204 
+The targets are: 386 
+The final paths are:
+204, 202, 200, 71, 74, 415, 413, 410, 405, 403, 386, (472)
+204, 202, 200, 71, 74, 415, 413, 409, 405, 403, 386, (476)
+204, 202, 200, 71, 74, 415, 413, 411, 421, 423, 403, 386, (474)
+Number of paths is 3
+The residues that occur the most in the suboptimal paths are: 
+71 3
+74 3
+200 3
+202 3
+204 3
+386 3
+403 3
+405 2
+413 3
+415 3
+The edges that occur the most in the suboptimal paths are:
+71 74 3
+71 200 3
+74 415 3
+200 202 3
+202 204 3
+386 403 3
+413 415 3
