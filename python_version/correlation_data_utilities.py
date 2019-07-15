@@ -5,6 +5,9 @@ import sys
 import os
 import collections
 import copy
+import tqdm
+from tqdm import tqdm
+from tqdm import tqdm_notebook
 
 noPytraj=False
 try:
@@ -365,7 +368,8 @@ def matAdj(mat):
     return Amat
     
 
-def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0):
+def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0,
+                    useProgressBar=True,pbarFun=tqdm):
     #This algorithm makes use of the full moore-penrose pseudo-inverse
     #which is generally quite dense. The algorithm will scale quite poorly
     #for very large systems.
@@ -412,14 +416,28 @@ def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0):
             print Ei
             print "Ej:",
             print Ej
-    Ebtw=np.array(map(lambda i,j:
-                Amat[i,j]*\
-                np.sum(map(lambda src:
-                    np.sum(map(lambda trg:
-                        np.abs(Linv[i,src]+Linv[j,trg]-\
-                               Linv[i,trg]-Linv[j,src]),
-                        targets)),
-                    sources)),Ei,Ej))/(len(sources)*len(targets))
+    if verbose and useProgressBar:
+        Ebtw=np.array(map(lambda i,j:
+                    Amat[i,j]*\
+                    np.sum(map(lambda src:
+                        np.sum(map(lambda trg:
+                            np.abs(Linv[i,src]+Linv[j,trg]-\
+                                   Linv[i,trg]-Linv[j,src]),
+                            targets)),
+                        sources)),
+                          pbarFun(Ei,file=sys.stdout),
+                          Ej))/(len(sources)*len(targets))
+    else:
+        Ebtw=np.array(map(lambda i,j:
+                    Amat[i,j]*\
+                    np.sum(map(lambda src:
+                        np.sum(map(lambda trg:
+                            np.abs(Linv[i,src]+Linv[j,trg]-\
+                                   Linv[i,trg]-Linv[j,src]),
+                            targets)),
+                        sources)),
+                          Ei,
+                          Ej))/(len(sources)*len(targets))
     if verbose:
         if verboseLevel > 0:
             print "Ebtw:",
@@ -441,7 +459,8 @@ def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0):
     return(eMat)
     
 
-def getBtwMat(mat,sources,targets,verbose=False,verboseLevel=0):
+def getBtwMat(mat,sources,targets,verbose=False,verboseLevel=0,
+              useProgressBar=False,pbarFun=tqdm):
     #Given a (possibly weighted) network in matrix format (mat)
     #and a set of source and target nodes (sources and targets)
     #return the corresponding network with flow betweenness
@@ -465,7 +484,9 @@ def getBtwMat(mat,sources,targets,verbose=False,verboseLevel=0):
     if verbose:
         print "generating flow betweenness scores"
     return(e_btw_from_Linv(Linv,Amat,sources,targets,
-                           verbose=verbose,verboseLevel=verboseLevel))
+                           verbose=verbose,verboseLevel=verboseLevel,
+                           useProgressBar=useProgressBar,
+                           pbarFun=pbarFun))
     
     
 
@@ -756,29 +777,29 @@ def get_top_n_pathData_paths(pathData,n,verbose=False,verboseLevel=0):
     outData['count']=len(outData['lengths'])
     return outData
 
-def get_pathData_node_count_array(pathData,nNodes,verbose=False):
+def get_pathData_node_count_array(pathData,nNodes,inputIndexBase=0,verbose=False):
     outArray=np.zeros(nNodes)
     for path in pathData['paths']:
-        outArray[path]=outArray[path]+1.0
+        outArray[path-inputIndexBase]=outArray[path-inputIndexBase]+1.0
     return outArray
 
-def get_pathData_node_frequency_array(pathData,nNodes,verbose=False):
-    outArray=get_pathData_node_count_array(pathData,nNodes,verbose)/\
+def get_pathData_node_frequency_array(pathData,nNodes,inputIndexBase=0,verbose=False):
+    outArray=get_pathData_node_count_array(pathData,nNodes,inputIndexBase,verbose)/\
         pathData['count']
     return outArray
     
 
-def get_pathData_edge_count_matrix(pathData,nNodes,verbose=False):
+def get_pathData_edge_count_matrix(pathData,nNodes,inputIndexBase=0,verbose=False):
     outMat=np.matrix(np.zeros([nNodes,nNodes]))
     for path in pathData['paths']:
-        outMat[path[0:(len(path)-1)],path[1:len(path)]]=outMat[
-            path[0:(len(path)-1)],path[1:len(path)]]+1.0
-        outMat[path[1:(len(path))],path[0:(len(path)-1)]]=outMat[
-            path[1:(len(path))],path[0:(len(path)-1)]]+1.0
+        outMat[path[0:(len(path)-1)]-inputIndexBase,path[1:len(path)]-inputIndexBase]=outMat[
+            path[0:(len(path)-1)]-inputIndexBase,path[1:len(path)]-inputIndexBase]+1.0
+        outMat[path[1:(len(path))]-inputIndexBase,path[0:(len(path)-1)]-inputIndexBase]=outMat[
+            path[1:(len(path))]-inputIndexBase,path[0:(len(path)-1)]-inputIndexBase]+1.0
     return outMat
 
-def get_pathData_edge_frequency_matrix(pathData,nNodes,verbose=False):
-    outMat=get_pathData_edge_count_matrix(pathData,nNodes,verbose)/\
+def get_pathData_edge_frequency_matrix(pathData,nNodes,inputIndexBase=0,verbose=False):
+    outMat=get_pathData_edge_count_matrix(pathData,nNodes,inputIndexBase,verbose)/\
         pathData['count']
     return outMat
 
@@ -824,3 +845,158 @@ def get_matrix_element_maxRankings(mat,invert=False,verbose=False):
             unfoldedMat,invert=invert,verbose=verbose))
     rankingMat=unfoldedRankingMat.reshape(mat.shape)
     return rankingMat
+
+#functions to facilitate loading path data from WISP logfiles
+def load_wispLog_paths(logFilePath):
+    pathList=[]
+    with open(logFilePath,'r') as logFile:
+        foundPathStart=False
+        line=logFile.readline()
+        while line and not foundPathStart:
+            if 'Output identified paths' in line:
+                foundPathStart=True
+                #print line
+            line=logFile.readline()
+        if not foundPathStart:
+            sys.stderr.write("Error: End of log file reached before path section was found")
+        else:
+            iPath=-1
+            while '#' in line:
+                if 'Path' in line:
+                    if iPath>=0:
+                        pathList.append(tempPath)
+                        tempPath=[]
+                        iPath=iPath+1
+                    else:
+                        tempPath=[]
+                        iPath=iPath+1
+                elif ('Length' in line):
+                    tempPath.append(line.split()[2])
+                elif ('Nodes:' in line):
+                    tokens=np.array(line.split(),dtype='|S')
+                    for node in tokens[2:len(tokens):2]:
+                        tempPath.append(node)
+                line=logFile.readline()
+    return pathList
+
+def simple_wispNode_converter(wispNode):
+    return int(wispNode.split('_')[len(wispNode.split('_'))-1])
+
+def wispPath_to_nodeIndPath(wispPath,
+                            wispNode_to_nodeInd_function=simple_wispNode_converter):
+    nodeIndPath=np.zeros(len(wispPath)-1)
+    for iNode,wispNode in enumerate(wispPath[1:]):
+        nodeIndPath[iNode]=wispNode_to_nodeInd_function(wispNode)
+    return np.array(nodeIndPath,dtype=int)
+
+def wispPaths_to_pathData(wispPaths,
+                          wispNode_to_nodeInd_function=simple_wispNode_converter):
+    pathData={
+        'lengths':[],
+        'paths':[],
+        'count':len(wispPaths)
+    }
+    for iPath,wispPath in enumerate(wispPaths):
+        pathData['lengths'].append(float(wispPath[0]))
+        pathData['paths'].append(
+            wispPath_to_nodeIndPath(wispPath,
+                                    wispNode_to_nodeInd_function))
+    return pathData
+
+def load_wispLog_pathData(logFilePath,
+                          wispNode_to_nodeInd_function=simple_wispNode_converter):
+    return wispPaths_to_pathData(
+        load_wispLog_paths(logFilePath),
+        wispNode_to_nodeInd_function)
+
+def netMatDict_to_nodeDataTable(netMatDict,
+                                keySep='.',keyColNames=None,
+                                indexCols=None,nodeIndName='X',
+                                nodeInds=None,lapFunc=(lambda x: 2)):
+    nodeTables=[]
+    if (keyColNames is None):
+        keyNames=['Key_%g'%iPart for iPart,part in \
+                  enumerate(netMatDict.keys()[0].split(keySep))]
+    else:
+        keyNames=keyColNames
+    if indexCols is None:
+        indCols=keyNames
+    else:
+        indCols=indexCols
+    with tqdm(len(netMatDict)) as pbar:
+        for matKey in netMatDict.keys():
+            pbar.set_description_str(matKey)
+            keyParts=matKey.split(keySep)
+            tempMatLap=matLap(netMatDict[matKey])
+            nodeVals=np.array(np.matrix(tempMatLap).diagonal()).flatten()
+            norm=np.array(
+                [lapFunc(
+                    np.concatenate([tempMatLap[iRow,0:(iRow-1)],
+                                    tempMatLap[iRow,(iRow+1):]])
+                 ) for iRow,row in enumerate(tempMatLap)])
+            nodeVals=nodeVals/norm
+            nNodes=len(nodeVals)
+            if nodeInds is None:
+                inds=np.arange(nNodes)
+            tempTable=pd.DataFrame({
+                nodeIndName:inds,
+                'value':nodeVals
+            })
+            for iCol,keyCol in enumerate(keyNames):
+                tempTable[keyCol]=[keyParts[iCol]]*nNodes
+            nodeTables.append(copy.deepcopy(tempTable))
+            pbar.update()
+    nodeTable=pd.concat(nodeTables)
+    nodeDataTable=nodeTable.pivot_table(
+        index=indCols,columns=nodeIndName,
+        values='value',aggfunc=np.mean,fill_value=0
+    )
+    nodeDataTable.columns=np.array(nodeDataTable.columns)
+    nodeDataTable=nodeDataTable.reset_index()
+    return nodeDataTable
+
+def netMatDict_to_edgeDataTable(netMatDict,
+                                keySep='.',keyColNames=None,
+                                indexCols=None,edgeIndNames=['X','Y'],
+                                nodeInds=None,sparse=True):
+    edgeTables=[]
+    if (keyColNames is None):
+        keyNames=['Key_%g'%iPart for iPart,part in \
+                  enumerate(netMatDict.keys()[0].split(keySep))]
+    else:
+        keyNames=keyColNames
+    if indexCols is None:
+        indCols=keyNames
+    else:
+        indCols=indexCols
+    with tqdm(len(netMatDict)) as pbar:
+        for matKey in netMatDict.keys():
+            pbar.set_description_str('%s'%matKey)
+            keyParts=matKey.split('.')
+            tempMat=netMatDict[matKey]
+            if sparse:
+                edgeInds=np.nonzero(tempMat)
+            else:
+                pairs=np.array([[ii,jj] \
+                       for ii in np.arange(tempMat.shape[0]) \
+                       for jj in np.arange(tempMat.shape[1])])
+                edgeInds=(pairs[:,0],pairs[:,1])
+            edgeVals=np.array(tempMat)[edgeInds]
+            nEdges=len(edgeVals)
+            tempTable=pd.DataFrame({
+                edgeIndNames[0]:edgeInds[0],
+                edgeIndNames[1]:edgeInds[1],
+                'value':edgeVals
+            })
+            for iCol,keyCol in enumerate(keyNames):
+                tempTable[keyCol]=[keyParts[iCol]]*nEdges
+            edgeTables.append(copy.deepcopy(tempTable))
+            pbar.update()
+    edgeTable=pd.concat(edgeTables)
+    edgeDataTable=edgeTable.pivot_table(
+        index=indCols,columns=edgeIndNames,
+        values='value',aggfunc=np.mean,fill_value=0)
+    edgeDataTable.columns=edgeDataTable.columns.map(
+        lambda x: '_'.join(['%g'%xi for xi in x]))
+    edgeDataTable=edgeDataTable.reset_index()
+    return edgeDataTable
