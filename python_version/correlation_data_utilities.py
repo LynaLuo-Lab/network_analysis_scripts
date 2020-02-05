@@ -8,6 +8,8 @@ import copy
 import tqdm
 from tqdm import tqdm
 from tqdm import tqdm_notebook
+import networkx as nx
+from itertools import islice
 
 noPytraj=False
 try:
@@ -1000,3 +1002,7 @@ def netMatDict_to_edgeDataTable(netMatDict,
         lambda x: '_'.join(['%g'%xi for xi in x]))
     edgeDataTable=edgeDataTable.reset_index()
     return edgeDataTable
+
+#taken directly from the networkx manual
+def k_shortest_paths(G, source, target, k, weight=None):
+     return list(islice(nx.shortest_simple_paths(G, source, target, weight=weight), k))
