@@ -1063,10 +1063,17 @@ def calculatePathLength(pathGraph,path,weight='weight'):
                    for edge in zip(path[:-1],path[1:])]))
 
 #Utilities for computing distance topology in pytraj
-def checkCollision(Rmin1,Rmax1,Rmin2,Rmax2,collisionRadius=0):
-    return(np.product((Rmin1-collisionRadius)<=(Rmax2+collisionRadius)) * \
-           np.product((Rmax1+collisionRadius)>=(Rmin2-collisionRadius)))
+def checkCollision(Rmin1,Rmax1,Rmin2,Rmax2,collisionRadius=0,axis=None):
+    return(np.product((Rmin1-collisionRadius)<=(Rmax2+collisionRadius),axis=axis) * \
+           np.product((Rmax1+collisionRadius)>=(Rmin2-collisionRadius),axis=axis))
 
+def collisionCount(Rmin1,Rmax1,Rmin2,Rmax2,
+                   collisionRadius=0,crdAxis=1):
+    return(np.sum(np.product((Rmin1-collisionRadius)<=(Rmax2+collisionRadius),axis=crdAxis) * \
+                  np.product((Rmax1+collisionRadius)>=(Rmin2-collisionRadius),axis=crdAxis)))
+
+#This just returns whether or not a collision has ever happened, only slightly faster
+#than the series apparently, though likely smaller memory requirements
 def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgress=False):
     if resInds is None:
         nRes=traj.top.n_residues()
@@ -1081,14 +1088,14 @@ def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgres
         resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
     else:
         resIter=resInds
-    resMinBounds=np.array([np.min(traj.xyz[:,resInd,:],axis=(0,1)) \
+    resMinBounds=np.array([np.min(traj.xyz[:,resInd,:],axis=1) \
                            for resInd in resIter])
     
     if showProgress:
         resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
     else:
         resIter=resInds
-    resMaxBounds=np.array([np.max(traj.xyz[:,resInd,:],axis=(0,1)) \
+    resMaxBounds=np.array([np.max(traj.xyz[:,resInd,:],axis=1) \
                            for resInd in resIter])
     
     resPairs=np.array(list(combinations(np.arange(nRes),2)))
@@ -1106,4 +1113,50 @@ def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgres
         (collisionCheckArray,
          (resPairs[:,0],resPairs[:,1])),shape=(nRes,nRes))
     collisionMat=collisionMat+collisionMat.T
+    return(collisionMat)
+
+#Counts the number of frames where each residue pair has collided
+#returns the result as a sparse matrix (scipy coo format)
+def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
+                                     resInds=None,showProgress=False,
+                                     frameAxis=0,indAxis=1,crdAxis=2):
+    if resInds is None:
+        nRes=traj.top.n_residues()
+        resnums=np.arange(nRes)
+    else:
+        resnums=resInds
+        nRes=len(resInds)
+    
+    resInds=[traj.topology.atom_indices(':%g'%iRes) for iRes in resnums+1]
+    
+    if showProgress:
+        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
+    else:
+        resIter=resInds
+    resMinBounds=np.array([np.min(traj.xyz[:,resIndSet,:],axis=indAxis) \
+                           for resIndSet in resIter])
+    
+    if showProgress:
+        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
+    else:
+        resIter=resInds
+    resMaxBounds=np.array([np.max(traj.xyz[:,resIndSet,:],axis=indAxis) \
+                           for resIndSet in resIter])
+    
+    resPairs=np.array(list(combinations(np.arange(nRes),2)))
+    if showProgress:
+        pairIter=tqdm.tqdm_notebook(resPairs,desc='Computing Collisions')
+    else:
+        pairIter=resPairs
+    collisionCheckArray=[
+        collisionCount(resMinBounds[resPair[0]],resMaxBounds[resPair[0]],
+                       resMinBounds[resPair[1]],resMaxBounds[resPair[1]],
+                       collisionRadius=collisionRadius,crdAxis=crdAxis-1) \
+        for resPair in pairIter]
+
+    #return(collisionCheckArray)
+    collisionCountTensor=sp.sparse.coo_matrix(
+        (np.concatenate([collisionCheckArray,collisionCheckArray]),
+         (np.concatenate([resPairs[:,0],resPairs[:,1]]),
+          np.concatenate([resPairs[:,1],resPairs[:,0]]))),shape=(nRes,nRes))
     return(collisionMat)
