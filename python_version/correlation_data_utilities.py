@@ -1160,3 +1160,107 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
          (np.concatenate([resPairs[:,0],resPairs[:,1]]),
           np.concatenate([resPairs[:,1],resPairs[:,0]]))),shape=(nRes,nRes))
     return(collisionMat)
+
+#Utilities to compute pearson and linear mutual information correlation
+#matrices... these seem to be slow compared to carma and g_corr but may
+#be useful when such tools cannot be easily compiled (e.g. cloud computing applications)
+def calc_Ci(X,crdAxis=1):
+    return(
+        np.mean(
+            np.apply_along_axis(
+                lambda x: np.array(np.matrix([x]).T*np.matrix([x])),
+                arr=X,
+                axis=crdAxis),axis=0))
+
+def calc_Cij(Xi,Xj,crdAxis=1):
+    return(
+        np.mean(
+            np.apply_along_axis(
+                lambda x: np.array(np.matrix([x]).T*np.matrix([x])),
+                arr=np.concatenate([Xi,Xj],axis=crdAxis),
+                axis=crdAxis),axis=0))
+
+def calc_Linear_Mutual_Information(Xi,Xj,
+                                   Ci=None,Cj=None,
+                                   #Cii=None,Cjj=None,
+                                   crdAxis=1,
+                                   verbose=False):
+    #Ci,Cii,Cj, and Cjj can be input if they have been calculated in advance
+    #This can save significant when calcuting linear MI over all pairs in a 
+    #large number of coordinate sets since Ci,Cii,Cj, and Cjj can be computed
+    #in a single loop over all coordinate sets instead of needing to recalculated
+    #for each ij coordinate set pair
+    if Ci is None:
+        ci=calc_Ci(Xi,crdAxis)
+    else:
+        ci=Ci
+    #if Cii is None:
+    #    cii=calc_Cij(Xi,Xi,crdAxis)
+    #else:
+    #    cii=Cii
+    if Cj is None:
+        cj=calc_Ci(Xj,crdAxis)
+    else:
+        cj=Cj
+    #if Cjj is None:
+    #    cjj=calc_Cij(Xj,Xj,crdAxis)
+    #else:
+    #    cjj=Cjj
+        
+    cij=calc_Cij(Xi,Xj,crdAxis)
+    #cji=calc_Cij(Xj,Xi,crdAxis)
+    CijMat=cij
+    #CijMat=np.matrix(
+    #    np.concatenate(
+    #        [np.concatenate([cii,cij],axis=1),
+    #         np.concatenate([cij,cjj],axis=1)],
+    #        axis=0))
+    if verbose:
+        for entryName,entry in [
+            ['Ci',ci], #['Cii',cii],
+            ['Cj',cj], #['Cjj',cjj],
+            #['Cij',cij],['Cji',cji],
+            ['CijMat',CijMat],
+            ['det(Ci)',np.linalg.det(ci)],
+            ['det(Cj)',np.linalg.det(cj)],
+            ['det(CijMat)',np.linalg.det(CijMat)]
+        ]:
+            print(entryName)
+            print(entry)
+    return(.5*(np.log(np.linalg.det(ci))+np.log(np.linalg.det(cj))-np.log(np.abs(np.linalg.det(CijMat)))))
+
+def calc_pear_corr(Xi,Xj,Rii=None,Rjj=None,crdAxis=1):
+    if Rii is None:
+        rii=np.mean(np.apply_along_axis(lambda x: np.sum(x),arr=Xi**2,axis=crdAxis))
+    else:
+        rii=Rii
+    if Rjj is None:
+        rjj=np.mean(np.apply_along_axis(lambda x: np.sum(x),arr=Xj**2,axis=crdAxis))
+    else:
+        rjj=Rjj
+    rij=np.mean(np.apply_along_axis(lambda x: np.sum(x),arr=Xi*Xj,axis=crdAxis))
+    return(rij/np.sqrt(rii*rjj))
+    
+
+def calc_Normalized_LinearMI(Xi,Xj,
+                             Ci=None,Cj=None,
+                             #Cii=None,Cjj=None,
+                             Rii=None,Rjj=None,
+                             crdAxis=1,verbose=False):
+    Imi=calc_Linear_Mutual_Information(Xi,Xj,
+                                       Ci,Cj,
+                                       #Cii,Cjj,
+                                       crdAxis,
+                                       verbose)
+    Rmi=(1-np.exp(-2*Imi/Xi.shape[crdAxis]))**(1/2)
+    
+    rij=calc_pear_corr(Xi,Xj,Rii,Rjj,crdAxis)
+    Igauss=-Xi.shape[crdAxis]/2.*np.log(1-rij**2)
+    Rgauss=(1-np.exp(-2*Igauss/Xi.shape[crdAxis]))**(1/2)
+    if verbose:
+        print('rij',rij)
+        print('Igauss',Igauss)
+        print('Rgauss',Rgauss)
+        print('Imi',Imi)
+        print('Rmi',Rmi)
+    return(Rmi)
