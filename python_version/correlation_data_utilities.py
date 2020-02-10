@@ -10,6 +10,7 @@ from tqdm import tqdm
 from tqdm import tqdm_notebook
 import networkx as nx
 from itertools import islice
+from itertools import combinations
 
 noPytraj=False
 try:
@@ -1060,3 +1061,49 @@ def converge_subopt_paths_betweenness(inputNetwork,source,target,weight='weight'
 def calculatePathLength(pathGraph,path,weight='weight'):
     return(np.sum([pathGraph.edges()[(edge[0],edge[1])][weight] \
                    for edge in zip(path[:-1],path[1:])]))
+
+#Utilities for computing distance topology in pytraj
+def checkCollision(Rmin1,Rmax1,Rmin2,Rmax2,collisionRadius=0):
+    return(np.product((Rmin1-collisionRadius)<=(Rmax2+collisionRadius)) * \
+           np.product((Rmax1+collisionRadius)>=(Rmin2-collisionRadius)))
+
+def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgress=False):
+    if resInds is None:
+        nRes=traj.top.n_residues()
+        resnums=np.arange(nRes)
+    else:
+        resnums=resInds
+        nRes=len(resInds)
+    
+    resInds=[traj.topology.atom_indices(':%g'%iRes) for iRes in resnums+1]
+    
+    if showProgress:
+        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
+    else:
+        resIter=resInds
+    resMinBounds=np.array([np.min(traj.xyz[:,resInd,:],axis=(0,1)) \
+                           for resInd in resIter])
+    
+    if showProgress:
+        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
+    else:
+        resIter=resInds
+    resMaxBounds=np.array([np.max(traj.xyz[:,resInd,:],axis=(0,1)) \
+                           for resInd in resIter])
+    
+    resPairs=np.array(list(combinations(np.arange(nRes),2)))
+    if showProgress:
+        pairIter=tqdm.tqdm_notebook(resPairs,desc='Computing Collisions')
+    else:
+        pairIter=resPairs
+    collisionCheckArray=[
+        checkCollision(resMinBounds[resPair[0]],resMaxBounds[resPair[0]],
+                       resMinBounds[resPair[1]],resMaxBounds[resPair[1]],
+                       collisionRadius=collisionRadius) \
+        for resPair in pairIter]
+
+    collisionMat=sp.sparse.coo_matrix(
+        (collisionCheckArray,
+         (resPairs[:,0],resPairs[:,1])),shape=(nRes,nRes))
+    collisionMat=collisionMat+collisionMat.T
+    return(collisionMat)
