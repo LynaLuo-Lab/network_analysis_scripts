@@ -17,6 +17,7 @@ from itertools import combinations
 noPytraj=False
 try:
     import pytraj as pt
+    from pytraj.utils.progress import ProgressTrajectoryBar
 except ImportError:
     print("could not import pytraj")
     noPytraj=True
@@ -1116,19 +1117,17 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
                                      showProgress=False,
                                      frameAxis=0,indAxis=1,crdAxis=2,
                                      returnBoundVecs=False):
-    if resInds is None:
-        nRes=traj.top.n_residues()
-        resnums=np.arange(nRes)
-    else:
-        resnums=resInds
-        nRes=len(resInds)
-    
     if resinds is None:
+        nRes=traj.top.n_residues
+        resnums=np.arange(nRes)
         resInds=[traj.topology.atom_indices(':%g'%iRes) for iRes in resnums+1]
     else:
+        #resnums=resInds
+        nRes=len(resinds)
         resInds=resinds
     
-    if (minBounds is None) | (len(minBounds) != len(resInds)):
+    #print(len(resInds))
+    if (minBounds is None): #| (len(minBounds) != len(resInds)):
         if showProgress:
             resIter=tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
         else:
@@ -1138,7 +1137,7 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
     else:
         resMinBounds=minBounds
     
-    if (maxBounds is None) | (len(maxBounds) != len(resInds)):
+    if (maxBounds is None): #| (len(maxBounds) != len(resInds)):
         if showProgress:
             resIter=tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
         else:
@@ -1153,6 +1152,7 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
         pairIter=tqdm_notebook(resPairs,desc='Computing Collisions')
     else:
         pairIter=resPairs
+    #print(resMinBounds.shape)
     collisionCheckArray=[
         collisionCount(resMinBounds[resPair[0]],resMaxBounds[resPair[0]],
                        resMinBounds[resPair[1]],resMaxBounds[resPair[1]],
@@ -1164,10 +1164,61 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
         (np.concatenate([collisionCheckArray,collisionCheckArray]),
          (np.concatenate([resPairs[:,0],resPairs[:,1]]),
           np.concatenate([resPairs[:,1],resPairs[:,0]]))),shape=(nRes,nRes))
-    if not returnBoundVecs:
+    if returnBoundVecs:
         return(collisionMat,resMinBounds,resMaxBounds)
     else:
         return(collisionMat)
+    
+def compute_pairwise_minDist_data(traj,
+                                  resindexpairs=None,
+                                  chunkSize=1000,
+                                  showProgress=False):
+    '''
+        traj: a pytraj trajectory
+        resindexpairs: pairs of residues to compute distance series for. These should be base 0 indices.
+            The default will compute all possible residue pair combinations. This option can allow you
+            to filter which pairs to compute. E.g. if you have an nResidue by nResidue matrix (filterMatrix)
+            wich has nonzero values for only the pairs to be computed you could use:
+            resindexpairs=zip(np.nonzero(filterMatrix)[0],np.nonzero(filterMatrix)[1])
+        showProgress: if set to True, display a tqdm_notebook style progress bar
+        chunkSize: Due to technical considerations, it is apparently faster to do several hundred to
+            several thousand pair distance calculations at a time. This controls the number of
+            pair distances calculated in one pass over the entire trajectory. For the IGPS system
+            1000 seemed to be roughly optimal, but the optimal value will likely vary depending on system size
+            and trajectory length.
+        
+        returns an M-Residue_Pair by N-Frame array where rows are the residue pair and columns are 
+            trajectory frames. Each entry is the minimum residue-residue interatomic distance for the
+            given residue pair at the given frame.
+    '''
+    if resindexpairs is None:
+        resIndices=np.arange(traj.Top.n_residues)
+        resIndexPairs=list(combinations(resIndices,2))
+    else:
+        resIndices=resindexpairs
+    
+    distData=[]
+    
+    chunkStart=0
+    nPairs=len(resPairs)
+    
+    if showProgress:
+        pbar=tqdm.tqdm_notebook(total=nPairs,
+                                desc='computing pair distances')
+    while chunkStart<nPairs:
+        chunkEnd=chunkStart+chunkSize
+        pairIter=resIndices[chunkStart:chunkEnd]
+        commandList=['nativecontacts mindist :{:g} :{:g}'.format(resPair[0]+1,resPair[1]+1) \
+                     for resPair in pairIter]
+        distData.append(list(
+            pt.compute(commandList,traj).values())[2::3])
+        chunkStart=chunkEnd
+        gc.collect
+        pbar.update(chunkSize)
+    pbar.close()
+    
+    distData=np.concatenate(distData,axis=0)
+    return(distData)
 
 #Utilities to compute pearson and linear mutual information correlation
 #matrices... these seem to be slow compared to carma and g_corr but may
