@@ -1,5 +1,7 @@
+from __future__ import print_function
 import numpy as np
 import pandas as pd
+import scipy as sp
 import re
 import sys
 import os
@@ -1076,14 +1078,14 @@ def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgres
     resInds=[traj.topology.atom_indices(':%g'%iRes) for iRes in resnums+1]
     
     if showProgress:
-        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
+        resIter=tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
     else:
         resIter=resInds
     resMinBounds=np.array([np.min(traj.xyz[:,resInd,:],axis=1) \
                            for resInd in resIter])
     
     if showProgress:
-        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
+        resIter=tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
     else:
         resIter=resInds
     resMaxBounds=np.array([np.max(traj.xyz[:,resInd,:],axis=1) \
@@ -1091,7 +1093,7 @@ def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgres
     
     resPairs=np.array(list(combinations(np.arange(nRes),2)))
     if showProgress:
-        pairIter=tqdm.tqdm_notebook(resPairs,desc='Computing Collisions')
+        pairIter=tqdm_notebook(resPairs,desc='Computing Collisions')
     else:
         pairIter=resPairs
     collisionCheckArray=[
@@ -1109,8 +1111,11 @@ def compute_BoxCollision_matrix(traj,collisionRadius=0.,resInds=None,showProgres
 #Counts the number of frames where each residue pair has collided
 #returns the result as a sparse matrix (scipy coo format)
 def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
-                                     resInds=None,showProgress=False,
-                                     frameAxis=0,indAxis=1,crdAxis=2):
+                                     resinds=None,
+                                     minBounds=None,maxBounds=None,
+                                     showProgress=False,
+                                     frameAxis=0,indAxis=1,crdAxis=2,
+                                     returnBoundVecs=False):
     if resInds is None:
         nRes=traj.top.n_residues()
         resnums=np.arange(nRes)
@@ -1118,25 +1123,34 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
         resnums=resInds
         nRes=len(resInds)
     
-    resInds=[traj.topology.atom_indices(':%g'%iRes) for iRes in resnums+1]
-    
-    if showProgress:
-        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
+    if resinds is None:
+        resInds=[traj.topology.atom_indices(':%g'%iRes) for iRes in resnums+1]
     else:
-        resIter=resInds
-    resMinBounds=np.array([np.min(traj.xyz[:,resIndSet,:],axis=indAxis) \
-                           for resIndSet in resIter])
+        resInds=resinds
     
-    if showProgress:
-        resIter=tqdm.tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
+    if (minBounds is None) | (len(minBounds) != len(resInds)):
+        if showProgress:
+            resIter=tqdm_notebook(resInds,desc='Computing Residue Minimum Bounds')
+        else:
+            resIter=resInds
+        resMinBounds=np.array([np.min(traj.xyz[:,resIndSet,:],axis=indAxis) \
+                               for resIndSet in resIter])
     else:
-        resIter=resInds
-    resMaxBounds=np.array([np.max(traj.xyz[:,resIndSet,:],axis=indAxis) \
-                           for resIndSet in resIter])
+        resMinBounds=minBounds
+    
+    if (maxBounds is None) | (len(maxBounds) != len(resInds)):
+        if showProgress:
+            resIter=tqdm_notebook(resInds,desc='Computing Residue Maximum Bounds')
+        else:
+            resIter=resInds
+        resMaxBounds=np.array([np.max(traj.xyz[:,resIndSet,:],axis=indAxis) \
+                               for resIndSet in resIter])
+    else:
+        resMaxBounds=maxBounds
     
     resPairs=np.array(list(combinations(np.arange(nRes),2)))
     if showProgress:
-        pairIter=tqdm.tqdm_notebook(resPairs,desc='Computing Collisions')
+        pairIter=tqdm_notebook(resPairs,desc='Computing Collisions')
     else:
         pairIter=resPairs
     collisionCheckArray=[
@@ -1146,11 +1160,14 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
         for resPair in pairIter]
 
     #return(collisionCheckArray)
-    collisionCountTensor=sp.sparse.coo_matrix(
+    collisionMat=sp.sparse.coo_matrix(
         (np.concatenate([collisionCheckArray,collisionCheckArray]),
          (np.concatenate([resPairs[:,0],resPairs[:,1]]),
           np.concatenate([resPairs[:,1],resPairs[:,0]]))),shape=(nRes,nRes))
-    return(collisionMat)
+    if not returnBoundVecs:
+        return(collisionMat,resMinBounds,resMaxBounds)
+    else:
+        return(collisionMat)
 
 #Utilities to compute pearson and linear mutual information correlation
 #matrices... these seem to be slow compared to carma and g_corr but may
