@@ -13,6 +13,7 @@ from tqdm import tqdm_notebook
 import networkx as nx 
 from itertools import islice
 from itertools import combinations
+import gc
 
 noPytraj=False
 try:
@@ -1172,6 +1173,8 @@ def compute_BoxCollision_CountMatrix(traj,collisionRadius=0.,
 def compute_pairwise_minDist_data(traj,
                                   resindexpairs=None,
                                   chunkSize=1000,
+                                  outFilePath=None,
+                                  returnData=True,
                                   showProgress=False):
     '''
         traj: a pytraj trajectory
@@ -1186,8 +1189,15 @@ def compute_pairwise_minDist_data(traj,
             pair distances calculated in one pass over the entire trajectory. For the IGPS system
             1000 seemed to be roughly optimal, but the optimal value will likely vary depending on system size
             and trajectory length.
+        outFilePath: if set, the data will be written chunk by chunk to the specified filepath as it is
+            generated.
+        returnData: return an array containing the computed data. If turned off, nothing will be returned.
+            This can be useful when handling a very large number of pairs (i.e. if the computed data
+            will not fit in memory). Setting this to false and providing an outFilePath will cause the 
+            data to be written directly to disk instead of stored in an in-memory array.
+            Note that you will still need to be able to fit at least pair set chunk worth of data in memory.
         
-        returns an M-Residue_Pair by N-Frame array where rows are the residue pair and columns are 
+        returns: an M-Residue_Pair by N-Frame array where rows are the residue pair and columns are 
             trajectory frames. Each entry is the minimum residue-residue interatomic distance for the
             given residue pair at the given frame.
     '''
@@ -1200,25 +1210,40 @@ def compute_pairwise_minDist_data(traj,
     distData=[]
     
     chunkStart=0
-    nPairs=len(resPairs)
+    nPairs=len(resIndices)
     
     if showProgress:
-        pbar=tqdm.tqdm_notebook(total=nPairs,
+        pbar=tqdm_notebook(total=nPairs,
                                 desc='computing pair distances')
+    count=0
     while chunkStart<nPairs:
         chunkEnd=chunkStart+chunkSize
         pairIter=resIndices[chunkStart:chunkEnd]
         commandList=['nativecontacts mindist :{:g} :{:g}'.format(resPair[0]+1,resPair[1]+1) \
                      for resPair in pairIter]
-        distData.append(list(
-            pt.compute(commandList,traj).values())[2::3])
+        tempData=list(
+            pt.compute(commandList,traj).values())[2::3]
+        if returnData:
+            distData.append(copy.deepcopy(tempData))
         chunkStart=chunkEnd
-        gc.collect
+        if not (outFilePath is None):
+            pbar.set_description('writting data to disk')
+            if count==0:
+                with open(outFilePath,'w') as outFile:
+                    np.savetxt(outFile,X=tempData)
+                outFile=open(outFilePath,'a')
+            else:
+                np.savetxt(outFile,X=tempData)
+            pbar.set_description('computing pair distances')
+        count+=1
+        gc.collect()
         pbar.update(chunkSize)
     pbar.close()
+    outFile.close()
     
-    distData=np.concatenate(distData,axis=0)
-    return(distData)
+    if returnData:
+        distData=np.concatenate(distData,axis=0)
+        return(distData)
 
 #Utilities to compute pearson and linear mutual information correlation
 #matrices... these seem to be slow compared to carma and g_corr but may
