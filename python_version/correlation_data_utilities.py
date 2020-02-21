@@ -18,7 +18,7 @@ import gc
 import seaborn as sns
 import bokeh as bk
 from bokeh.plotting import figure, output_notebook, output_file, reset_output, show, ColumnDataSource
-from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter
+from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter, Title, BasicTicker
 from bokeh.transform import linear_cmap, factor_cmap, LinearColorMapper
 reset_output()
 output_notebook()
