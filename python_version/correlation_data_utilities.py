@@ -15,10 +15,17 @@ from itertools import islice
 from itertools import combinations
 import gc
 
+import seaborn as sns
+import bokeh as bk
+from bokeh.plotting import figure, output_notebook, output_file, reset_output, show, ColumnDataSource
+from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter
+reset_output()
+output_notebook()
+
 noPytraj=False
 try:
     import pytraj as pt
-    from pytraj.utils.progress import ProgressTrajectoryBar
+    from pytraj.utils.progress import ProgressBarTrajectory
 except ImportError:
     print("could not import pytraj")
     noPytraj=True
@@ -1313,7 +1320,7 @@ def calc_Linear_Mutual_Information(Xi,Xj,
             print(entry)
     return(.5*(np.log(np.linalg.det(ci))+np.log(np.linalg.det(cj))-np.log(np.abs(np.linalg.det(CijMat)))))
 
-def calc_pear_corr(Xi,Xj,Rii=None,Rjj=None,crdAxis=1):
+def calc_pear_corr(Xi,Xj,Rii=None,Rjj=None,crdAxis=1,verbose=False):
     if Rii is None:
         rii=np.mean(np.apply_along_axis(lambda x: np.sum(x),arr=Xi**2,axis=crdAxis))
     else:
@@ -1323,7 +1330,11 @@ def calc_pear_corr(Xi,Xj,Rii=None,Rjj=None,crdAxis=1):
     else:
         rjj=Rjj
     rij=np.mean(np.apply_along_axis(lambda x: np.sum(x),arr=Xi*Xj,axis=crdAxis))
-    return(rij/np.sqrt(rii*rjj))
+    if verbose:
+        print("rii:",rii)
+        print("rjj:",rjj)
+        print("rij:",rij)
+    return(rij/(np.sqrt(rii)*np.sqrt(rjj)))
     
 
 def calc_Normalized_LinearMI(Xi,Xj,
@@ -1348,3 +1359,128 @@ def calc_Normalized_LinearMI(Xi,Xj,
         print('Imi',Imi)
         print('Rmi',Rmi)
     return(Rmi)
+
+def bokeh_interactive_matrix_plot(mat,nonzero_only=True,
+                                    plotWidth=640,plotHeight=640,
+                                    colorMap=sns.color_palette("coolwarm", n_colors=256).as_hex(),
+                                    vmax=None,vmin=None,
+                                    xlabel=None,ylabel=None,title=None
+                                 ):
+    if nonzero_only:
+        matInds=np.nonzero(mat)
+        matVals=np.array(mat[matInds]).flatten()
+    else:
+        matInds=(np.arange(mat.shape[0]),np.arange(mat.shape[1]))
+        matVals=mat[matInds]
+    
+    tempFrame=pd.DataFrame({
+        'X':matInds[0],
+        'Y':matInds[1],
+        'Val':matVals
+    })
+    
+    vMax=np.max(matVals) if vmax is None else vmax
+    vMin=np.min(matVals) if vmin is None else vmin
+        
+    valueColName='Val'
+    
+    mapper=LinearColorMapper(palette=colorMap,
+                         low=vMin,
+                         high=vMax)
+
+    heatMapColumnSource=ColumnDataSource(tempFrame)
+
+    toolTips=[(colName,"@{}".format(colName)) for colName in tempFrame.columns]
+
+    p=bk.plotting.figure(plot_width=plotWidth,plot_height=plotHeight,
+                tooltips=toolTips)
+
+    if not (xlabel is None):
+        p.xaxis.axis_label=xlabel
+    if not (ylabel is None):
+        p.yaxis.axis_label=ylabel
+    if not (title is None):
+        p.title.text=title
+    
+    p.background_fill_color="black"
+    p.background_fill_alpha=.75
+    
+    color_bar=ColorBar(color_mapper=mapper,location='top_left')
+
+    p.rect(x='X',y='Y',
+           width=1,height=1,
+           source=heatMapColumnSource,
+           fill_color={'field':valueColName,'transform':mapper},line_color=None)
+    p.add_layout(color_bar)
+    show(p)
+    
+#A relatively simple bokeh based heatmap tool to quickly plot a heat map
+#using a given value column and coordinate column pair from a data table
+def bokeh_dataTable_heatMap(plotData,Xcol,Ycol,dataCol,
+                            width=640,height=640,
+                            rectheight=1,rectwidth=1,
+                            colorMap=sns.color_palette("coolwarm", n_colors=256).as_hex(),
+                            title=None,
+                            xlabel=None,
+                            ylabel=None,
+                            axisFontSize="14pt",
+                            vmin=None,vmax=None):
+    
+    if vmin is None:
+        eMin=plotData[dataCol].min()
+    else:
+        eMin=vmin
+    if vmax is None:
+        eMax=plotData[dataCol].max()
+    else:
+        eMax=vmax
+        
+    plotData['ColorWeight']=plotData[dataCol] #.map(lambda x: cNorm(x)) #.map(np.log10)
+    
+    p=bk.plotting.figure(
+        plot_width=width,plot_height=height,
+        #text_font_size='14pt',
+        title="{matName} Interaction Energy Heat Map".format(
+            matName='.'.join([
+                system,variant])))
+    
+    if title:
+        p.add_layout(Title(text=title),'above')
+    if xlabel:
+        p.xaxis.axis_label=xlabel
+    if ylabel:
+        p.yaxis.axis_label=ylabel
+        
+    p.xaxis.major_label_text_font_size=axisFontSize
+    p.yaxis.major_label_text_font_size=axisFontSize
+    
+    src=ColumnDataSource(plotData)
+    mapper=linear_cmap(field_name='ColorWeight',
+                       palette=colorMap,
+                       low=eMin,
+                       high=eMax,
+                      )
+    
+    cbMapper=LinearColorMapper(palette=colorMap,
+                               low=eMin,
+                               high=eMax)
+    color_bar = ColorBar(color_mapper=cbMapper, ticker= BasicTicker(),
+                     location=(0,0))
+
+    p.add_layout(color_bar, 'right')
+
+    p.rect(source=src,width=rectwidth,height=rectheight, x=Xcol,y=Ycol,
+             fill_color=mapper,color=mapper)
+
+    
+    
+    hover=HoverTool()
+    hover.tooltips=[
+        (colName,"@{"+"{colName}".format(colName=colName)+"}")
+        for colName in src.data.keys()
+    ]
+    print(hover.tooltips)
+    p.add_tools(hover)
+
+    output_notebook()
+    show(p)
