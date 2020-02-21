@@ -1438,11 +1438,7 @@ def bokeh_dataTable_heatMap(plotData,Xcol,Ycol,dataCol,
     plotData['ColorWeight']=plotData[dataCol] #.map(lambda x: cNorm(x)) #.map(np.log10)
     
     p=bk.plotting.figure(
-        plot_width=width,plot_height=height,
-        #text_font_size='14pt',
-        title="{matName} Interaction Energy Heat Map".format(
-            matName='.'.join([
-                system,variant])))
+        plot_width=width,plot_height=height)
     
     if title:
         p.add_layout(Title(text=title),'above')
