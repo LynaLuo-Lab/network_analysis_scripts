@@ -16,11 +16,16 @@ from itertools import combinations
 import gc
 
 import seaborn as sns
+import matplotlib
+from matplotlib import pyplot as plt
 import bokeh as bk
 from bokeh.plotting import figure, output_notebook, output_file, reset_output, show, ColumnDataSource
 from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter, Title, BasicTicker
 from bokeh.transform import linear_cmap, factor_cmap, LinearColorMapper
 from bokeh.models.tools import HoverTool
+from IPython.display import display, HTML
+
+import nglview as nv
 
 reset_output()
 output_notebook()
@@ -1483,3 +1488,139 @@ def bokeh_dataTable_heatMap(plotData,Xcol,Ycol,dataCol,
 
     output_notebook()
     show(p)
+    
+#functions for drawing networks using NGLview
+import nglview as nv
+import pytraj as pt
+
+def drawProtNetEdge(protStruc,resID1,resID2,ngViewOb,
+                    frame=0,edgeColor=[.5,.5,.5],radius=1,
+                    *shapeArgs,**shapeKwargs):
+    crd1=pt.center_of_mass(protStruc,':%g@CA'%resID1)[frame]
+    crd2=pt.center_of_mass(protStruc,':%g@CA'%resID2)[frame]
+    
+    
+    resname1=protStruc.topology.residue(resID1-1).name
+    resid1=protStruc.topology.residue(resID1-1).original_resid
+    
+    resname2=protStruc.topology.residue(resID2-1).name
+    resid2=protStruc.topology.residue(resID2-1).original_resid
+    edgeLabel='%s.%g-%s.%g (%g-%g)'%(
+        resname1,resid1,resname2,resid2,
+        resID1-1,resID2-2)
+    
+    return ngViewOb.shape.add_cylinder(
+        list(crd1),list(crd2),edgeColor,radius,
+        edgeLabel,
+        *shapeArgs,**shapeKwargs)
+
+def getCorrNetEdgeColors(valMat,maskInds=None,
+                         cmap=matplotlib.cm.get_cmap('viridis',1024),
+                         cNorm=None,
+                         baseColor=[0.,0.,0.]):
+    if maskInds is None:
+        nzInds=np.nonzero(np.isfinite(valMat))
+    else:
+        nzInds=maskInds
+    
+    if cNorm is None:
+        vMin=np.min(valMat[nzInds])
+        vMax=np.max(valMat[nzInds])
+        norm=matplotlib.colors.Normalize(vmin=vMin,vmax=vMax)
+    else:
+        norm=cNorm
+    
+    tempCarray=cmap(norm(valMat[nzInds]).data)
+    edgeColors=np.zeros((valMat.shape[0],valMat.shape[1],3))
+    for ii in np.arange(3):
+        edgeColors[:,:,ii]=baseColor[ii]
+        edgeColors[:,:,ii][nzInds]=tempCarray[:,ii]
+    return(edgeColors)
+
+def drawEdgeColorBar(valMat,maskInds=None,
+                     cmap=matplotlib.cm.get_cmap('viridis',1024),
+                     cNorm=None,
+                     ax=None,
+                     barSize=[16,4],
+                     label='Edge Color Scale',
+                     label_size=10,
+                     nTicks=5,
+                     orientation='horizontal',
+                     verbose=False):
+    if maskInds is None:
+        nzInds=np.nonzero(np.isfinite(valMat))
+    else:
+        nzInds=maskInds
+    tempCmap=cmap
+    tempCarray=tempCmap(valMat[nzInds])
+    if verbose:
+        print('vMin:',vMin,'vMax:',vMax)
+    
+    if cNorm is None:
+        vMin=np.min(valMat[nzInds])
+        vMax=np.max(valMat[nzInds])
+        norm=matplotlib.colors.Normalize(vmin=vMin,vmax=vMax)
+    else:
+        norm=cNorm
+    
+    if ax is None:
+        if orientation=='horizontal':
+            fig = plt.figure(figsize=barSize)
+            ax1 = fig.add_axes([0.3, 0.80, 0.4, 0.15])
+        else:
+            fig = plt.figure(figsize=np.flip(barSize))
+            ax1 = fig.add_axes([0.3, 0.10, 0.15, 0.4])
+    else:
+        ax1=ax
+    cb1 = matplotlib.colorbar.ColorbarBase(ax1, cmap=tempCmap,
+                                    norm=norm,
+                                    orientation=orientation)
+    cb1.set_label(label,size=label_size)
+    cb1.ax.tick_params(labelsize=label_size)
+    tick_locator = matplotlib.ticker.MaxNLocator(nbins=nTicks)
+    cb1.locator = tick_locator
+    cb1.update_ticks()
+    plt.show()
+
+def getCorrNetEdgeRadii(valMat,maskInds=None,
+                        eMin=.0625,eMax=.75):
+    if maskInds is None:
+        nzInds=np.isfinite(valMat)
+    else:
+        nzInds=maskInds
+        
+    plotMat=valMat
+    radiiMat=np.zeros(plotMat.shape)
+    radiiMat[nzInds]=np.log(np.abs(np.array(plotMat)[nzInds]))
+    rMin=np.min(radiiMat[nzInds])
+    rMax=np.max(radiiMat[nzInds])
+    rLinFun=lambda x: (x-rMin)/(rMax-rMin)
+    rMap=lambda x:(eMax-eMin)*rLinFun(x)+eMin
+    radiiMat[nzInds]=rMap(np.array(radiiMat[nzInds]))
+    return(radiiMat)
+
+def drawProtCorrMat(protStruc,corrMat,ngViewOb,
+                    frame=0,colorsArray=None,radiiMat=None,
+                    undirected=True):
+    nzInds=np.nonzero(corrMat)
+    edgeList=[]
+    if not (radiiMat is None):
+        radMat=radiiMat
+    else:
+        radMat=(np.abs(corrMat)>0)*.25
+    if undirected:
+        indArray=np.array([[ind[0],ind[1]] \
+                            for ind in np.array([nzInds[0],nzInds[1]]).T \
+                            if ind[0]<ind[1]])
+    else:
+        indArray=np.array([nzInds[0],nzInds[1]]).T
+    for nzInd in indArray:
+        if not (colorsArray is None):
+            colorParm={'edgeColor':list(colorsArray[nzInd[0],nzInd[1],:])}
+        else:
+            colorParm={}
+        edgeList.append(drawProtNetEdge(
+            protStruc,nzInd[0]+1,nzInd[1]+1,
+            ngViewOb,frame,radius=radMat[nzInd[0],nzInd[1]],
+            **colorParm))
+    return edgeList
