@@ -1,0 +1,53 @@
+| Run on Mon Dec 16 10:19:27 2019
+|
+|Input file:
+|--------------------------------------------------------------
+|Pairwise GB and PB decomposition
+|&general
+|   verbose=1,
+|   strip_mask="!:1-454",
+|   interval=10,
+|/
+|&gb
+|  igb=5, saltcon=0.100,
+|/
+|&decomp
+|  idecomp=3, print_res="1-454"
+|  dec_verbose=0,
+|/
+|--------------------------------------------------------------
+|MMPBSA.py Version=14.0
+|Complex topology file:           igps.prot_lig_apo.parm7
+|Initial mdcrd(s):                igps.prot_lig_apo.dcd
+|
+|Calculations performed using 50 complex frames.
+|
+|Generalized Born ESURF calculated using 'LCPO' surface areas
+|
+|All units are reported in kcal/mole.
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+GENERALIZED BORN:
+
+Complex:
+Energy Component            Average              Std. Dev.   Std. Err. of Mean
+-------------------------------------------------------------------------------
+BOND                      1534.3055               33.3447              4.7157
+ANGLE                     3713.7947               39.0861              5.5276
+DIHED                     4328.4037               25.7000              3.6345
+VDWAALS                  -3252.1259               30.5968              4.3270
+EEL                     -27134.6788              197.7744             27.9695
+1-4 VDW                   4604.4169               54.4549              7.7011
+1-4 EEL                  15471.2629               90.7652             12.8361
+EGB                      -7006.2022              155.3586             21.9710
+ESURF                      166.9538                2.7709              0.3919
+
+G gas                     -734.6211              188.0139             26.5892
+G solv                   -6839.2484              153.9639             21.7738
+
+TOTAL                    -7573.8695               81.6943             11.5533
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------

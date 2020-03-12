@@ -1,0 +1,13 @@
+Pairwise GB and PB decomposition
+&general
+   verbose=1,
+   strip_mask="!:1-454",
+   interval=10,
+/
+&gb
+  igb=5, saltcon=0.100,
+/
+&decomp
+  idecomp=3, print_res="1-454"
+  dec_verbose=0,
+/

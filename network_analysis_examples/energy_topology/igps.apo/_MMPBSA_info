@@ -1,0 +1,134 @@
+# You can alter the variables below to change what info is printed out
+INPUT['debug_printlevel'] = 0
+INPUT['verbose'] = 2
+INPUT['csv_format'] = 1
+INPUT['dec_verbose'] = 0
+#
+# MODIFY NOTHING BELOW HERE, OR GET WHAT YOU DESERVE
+INPUT['closureorder'] = 1
+INPUT['keep_files'] = 1
+INPUT['linit'] = 1000
+INPUT['mthick'] = 40.0
+INPUT['probe'] = 1.4
+INPUT['entropy'] = 0
+INPUT['solvbox'] = '-1,-1,-1'
+INPUT['istrng'] = 0.0
+INPUT['nmstartframe'] = 1
+INPUT['qm_theory'] = ''
+INPUT['nfocus'] = 2
+INPUT['idecomp'] = 3
+INPUT['qmcharge_com'] = 0
+INPUT['sander_apbs'] = 0
+INPUT['qm_residues'] = ''
+INPUT['closure'] = 'kh'
+INPUT['use_sander'] = 0
+INPUT['nminterval'] = 1
+INPUT['nmode_istrng'] = 0.0
+INPUT['rismrun'] = False
+INPUT['nmoderun'] = False
+INPUT['prbrad'] = 1.4
+INPUT['netcdf'] = ''
+INPUT['gbsa'] = 2
+INPUT['qmcut'] = 9999.0
+INPUT['cavity_offset'] = -0.5692
+INPUT['receptor_mask'] = None
+INPUT['frcopt'] = 0
+INPUT['thermo'] = 'std'
+INPUT['scale'] = 0.5
+INPUT['mutant_only'] = 0
+INPUT['poretype'] = 1
+INPUT['radiopt'] = 1
+INPUT['rismrun_std'] = False
+INPUT['tolerance'] = 1e-05
+INPUT['saltcon'] = 0.1
+INPUT['npbverb'] = 0
+INPUT['print_res'] = '1-454'
+INPUT['cutnb'] = 0.0
+INPUT['drms'] = 0.001
+INPUT['full_traj'] = 0
+INPUT['strip_mask'] = '!:1-454'
+INPUT['solvopt'] = 2
+INPUT['cavity_surften'] = 0.0378
+INPUT['ipb'] = 2
+INPUT['bcopt'] = 5
+INPUT['solvcut'] = 14.0
+INPUT['eneopt'] = 2
+INPUT['nmendframe'] = 1000000
+INPUT['qmcharge_lig'] = 0
+INPUT['pbrun'] = False
+INPUT['qmcharge_rec'] = 0
+INPUT['search_path'] = 0
+INPUT['memoptzero'] = 0
+INPUT['molsurf'] = 0
+INPUT['grdspc'] = 0.5
+INPUT['mctrdz'] = 0.0
+INPUT['temp'] = 298.15
+INPUT['polardecomp'] = 0
+INPUT['rism_verbose'] = 0
+INPUT['msoffset'] = 0.0
+INPUT['emem'] = 1.0
+INPUT['inp'] = 2
+INPUT['exdi'] = 80.0
+INPUT['dielc'] = 1.0
+INPUT['gbrun'] = True
+INPUT['nmode_igb'] = 1
+INPUT['rismrun_gf'] = False
+INPUT['ligand_mask'] = None
+INPUT['endframe'] = 9999999
+INPUT['ng'] = '-1,-1,-1'
+INPUT['maxarcdot'] = 1500
+INPUT['igb'] = 5
+INPUT['memopt'] = 0
+INPUT['fillratio'] = 4.0
+INPUT['buffer'] = 14.0
+INPUT['surfoff'] = 0.0
+INPUT['alarun'] = False
+INPUT['surften'] = 0.0072
+INPUT['maxcyc'] = 10000
+INPUT['ifqnt'] = 0
+INPUT['interval'] = 10
+INPUT['sasopt'] = 0
+INPUT['cutfd'] = 5.0
+INPUT['decomprun'] = True
+INPUT['startframe'] = 1
+INPUT['indi'] = 1.0
+FILES.clean = False
+FILES.complex_prmtop = 'igps.prot_lig_apo.parm7'
+FILES.infilehelp = False
+FILES.input_file = 'mmpbsa.pairwise_decomp.in'
+FILES.ligand_mdcrd = None
+FILES.ligand_prmtop = None
+FILES.make_mdins = False
+FILES.mdcrd = ['igps.prot_lig_apo.dcd']
+FILES.mutant_complex_prmtop = None
+FILES.mutant_ligand_prmtop = None
+FILES.mutant_receptor_prmtop = None
+FILES.prefix = '_MMPBSA_'
+FILES.receptor_mdcrd = None
+FILES.receptor_prmtop = None
+FILES.solvated_ligand_prmtop = None
+FILES.solvated_prmtop = None
+FILES.solvated_receptor_prmtop = None
+FILES.use_mdins = False
+FILES.xvvfile = '/Users/wbotellosmith/anaconda2/envs/py3/dat/mmpbsa/spc.xvv'
+size = 1
+numframes = 50
+numframes_nmode = 0
+mut_str = 'None'
+using_chamber = False
+|Input file:
+|--------------------------------------------------------------
+|Pairwise GB and PB decomposition
+|&general
+|   verbose=1,
+|   strip_mask="!:1-454",
+|   interval=10,
+|/
+|&gb
+|  igb=5, saltcon=0.100,
+|/
+|&decomp
+|  idecomp=3, print_res="1-454"
+|  dec_verbose=0,
+|/
+|--------------------------------------------------------------

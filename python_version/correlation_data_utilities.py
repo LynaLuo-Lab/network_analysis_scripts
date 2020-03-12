@@ -1507,7 +1507,7 @@ def drawProtNetEdge(protStruc,resID1,resID2,ngViewOb,
     resid2=protStruc.topology.residue(resID2-1).original_resid
     edgeLabel='%s.%g-%s.%g (%g-%g)'%(
         resname1,resid1,resname2,resid2,
-        resID1-1,resID2-2)
+        resID1-1,resID2-1)
     
     return ngViewOb.shape.add_cylinder(
         list(crd1),list(crd2),edgeColor,radius,

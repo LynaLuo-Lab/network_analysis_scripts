@@ -1,0 +1,16 @@
+# 12/13/19 16:03:10
+# igps.prot_lig_apo.parm7
+# Loaded topologies:
+#   igps.prot_lig_apo.parm7
+trajin igps.prot_lig_apo.dcd 1 1
+trajout igps.prot_lig_apo.pdb
+go
+quit
+# 12/13/19 16:03:53
+# igps.prot_lig_holo.parm7
+# Loaded topologies:
+#   igps.prot_lig_holo.parm7
+trajin igps.prot_lig_holo.dcd 1 1
+trajout igps.prot_lig_holo.pdb
+go
+quit
