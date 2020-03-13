@@ -1,3 +1,18 @@
 # Trajectory Data
 *.dcd
 *.dat
+
+network_analysis_examples/.DS_Store
+network_analysis_examples/.ipynb_checkpoints/
+network_analysis_examples/__pycache__/
+network_analysis_examples/correlation_data_utilities.py
+network_analysis_examples/distance_topology/igps.apo/_MMPBSA_complex_gb.mdout.0
+network_analysis_examples/distance_topology/igps.apo/igps.prot_lig_apo.mmpbsa.pairwise_decomp.decomp_energy_series.csv
+network_analysis_examples/distance_topology/igps.holo/_MMPBSA_complex_gb.mdout.0
+network_analysis_examples/distance_topology/igps.holo/igps.prot_lig_holo.mmpbsa.pairwise_decomp.decomp_energy_series.csv
+network_analysis_examples/distance_topology/minimumDistanceSeriesData/igps.apo.minimumDistanceData.txt
+network_analysis_examples/distance_topology/minimumDistanceSeriesData/igps.holo.minimumDistanceData.txt
+network_analysis_examples/energy_topology/igps.apo/_MMPBSA_complex_gb.mdout.0
+network_analysis_examples/energy_topology/igps.apo/igps.prot_lig_apo.mmpbsa.pairwise_decomp.decomp_energy_series.csv
+network_analysis_examples/energy_topology/igps.holo/_MMPBSA_complex_gb.mdout.0
+network_analysis_examples/energy_topology/igps.holo/igps.prot_lig_holo.mmpbsa.pairwise_decomp.decomp_energy_series.csv
