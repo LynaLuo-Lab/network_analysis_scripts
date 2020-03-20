@@ -20,7 +20,7 @@ import matplotlib
 from matplotlib import pyplot as plt
 import bokeh as bk
 from bokeh.plotting import figure, output_notebook, output_file, reset_output, show, ColumnDataSource
-from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter, Title, BasicTicker,FactorRange
+from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter, Title, BasicTicker, FactorRange
 from bokeh.transform import linear_cmap, factor_cmap, LinearColorMapper
 from bokeh.models.tools import HoverTool
 from bokeh.palettes import Spectral5, Spectral11, Spectral3, Accent3
