@@ -19,10 +19,11 @@ import seaborn as sns
 import matplotlib
 from matplotlib import pyplot as plt
 import bokeh as bk
-from bokeh.plotting import figure, output_notebook, output_file, reset_output, show, ColumnDataSource
+from bokeh.plotting import figure, output_notebook, output_file, reset_output, show, ColumnDataSource,FactorRange
 from bokeh.models import LinearColorMapper, ColorBar, FuncTickFormatter, Title, BasicTicker
 from bokeh.transform import linear_cmap, factor_cmap, LinearColorMapper
 from bokeh.models.tools import HoverTool
+from bokeh.palettes import Spectral5, Spectral11, Spectral3, Accent3
 from IPython.display import display, HTML
 
 import nglview as nv
@@ -1495,6 +1496,7 @@ import pytraj as pt
 
 def bokeh_tidtyDataTable_barChart(dataTable,xColumns,valColumn,
                                   fillColumnInd=0,lineColumnInd=0,
+                                  fillPalette=Spectral11,linePalette=Spectral11,
                                   columnFormatFuns=None,
                                   xAxisLabel=None,yAxisLabel=None,
                                   pWidth=500,pHeight=900):
@@ -1518,10 +1520,10 @@ def bokeh_tidtyDataTable_barChart(dataTable,xColumns,valColumn,
     
     p=figure(x_range=FactorRange(*xVals),plot_height=500,plot_width=900,tooltips=ToolTips)
     p.vbar(x='x',top=valColumn,width=.9,source=source,
-           fill_color=factor_cmap('x',palette=Spectral3,
+           fill_color=factor_cmap('x',palette=fillPalette,
                                   factors=plotData[xColumns[fillColumnInd]].unique(),
                                   start=fillColumnInd,end=fillColumnInd+1),
-           line_color=factor_cmap('x',palette=Accent3,
+           line_color=factor_cmap('x',palette=linePalette,
                                   factors=plotData[xColumns[lineColumnInd]].unique(),
                                   start=lineColumnInd,end=lineColumnInd+1))
     
