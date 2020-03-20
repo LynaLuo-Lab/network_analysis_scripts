@@ -1493,6 +1493,47 @@ def bokeh_dataTable_heatMap(plotData,Xcol,Ycol,dataCol,
 import nglview as nv
 import pytraj as pt
 
+def bokeh_tidtyDataTable_barChart(dataTable,xColumns,valColumn,
+                                  fillColumnInd=0,lineColumnInd=0,
+                                  columnFormatFuns=None,
+                                  xAxisLabel=None,yAxisLabel=None,
+                                  pWidth=500,pHeight=900):
+    plotData=dataTable[np.concatenate([xColumns,[valColumn]])].copy()
+    if columnFormatFuns:
+        for iCol,xCol in enumerate(xColumns):
+            plotData[xCol]=plotData[xCol].map(columnFormatFuns[iCol])
+    else:
+        for xCol in xColumns:
+            plotData[xCol]=plotData[xCol].map(str)
+            
+    xVals=[tuple(x) for x in list(plotData[xColumns].set_index(xColumns[0]).to_records())]
+    
+    source=ColumnDataSource(data={
+        'x':xVals,
+        valColumn:plotData[valColumn]
+    })
+    
+    ToolTips=[(colName,'@%s'%colName) for colName in \
+              source.to_df().columns]
+    
+    p=figure(x_range=FactorRange(*xVals),plot_height=500,plot_width=900,tooltips=ToolTips)
+    p.vbar(x='x',top=valColumn,width=.9,source=source,
+           fill_color=factor_cmap('x',palette=Spectral3,
+                                  factors=plotData[xColumns[fillColumnInd]].unique(),
+                                  start=fillColumnInd,end=fillColumnInd+1),
+           line_color=factor_cmap('x',palette=Accent3,
+                                  factors=plotData[xColumns[lineColumnInd]].unique(),
+                                  start=lineColumnInd,end=lineColumnInd+1))
+    
+    p.xaxis.major_label_orientation = 87.5*np.pi/180.
+    p.xaxis.group_label_orientation = 85.*np.pi/180.
+    p.xaxis.subgroup_label_orientation = 80.*np.pi/180.
+    if xAxisLabel:
+        p.xaxis.axis_label = xAxisLabel
+    if yAxisLabel:
+        p.yaxis.axis_label = yAxisLabel
+    show(p)
+
 def drawProtNetEdge(protStruc,resID1,resID2,ngViewOb,
                     frame=0,edgeColor=[.5,.5,.5],radius=1,
                     *shapeArgs,**shapeKwargs):
