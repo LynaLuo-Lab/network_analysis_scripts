@@ -391,6 +391,46 @@ def matAdj(mat):
     
 
 def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0,
+                    useLegacyAlgorithm=False,useProgressBar=False,pbarFun=tqdm):
+    if useLegacyAlgorithm:
+        return(e_btw_from_Linv_legacy(Linv,Amat,sources,targets,verbose=False,verboseLevel=0,
+                    useProgressBar=True,pbarFun=tqdm))
+    else:
+        
+        if verbose:
+            t1=time.time()
+        bVecMat=np.zeros((Amat.shape[1],len(sources)*len(targets)))
+        smat,tmat=np.meshgrid(sources,targets)
+        bVecMat[
+            smat.flatten(),np.arange(len(smat.flatten()))
+        ]=1
+        bVecMat[
+            tmat.flatten(),np.arange(len(tmat.flatten()))
+        ]=-1
+        smat=[]
+        tmat=[]
+        gc.collect()
+        
+        potVecMat=np.array(np.matmul(Linv,bVecMat))
+        bVecMat=[]
+        gc.collect()
+        
+        nzInds=np.nonzero(Amat)
+        btw2=np.array(sp.sparse.coo_matrix(
+            (Amat[nzInds]*np.sum(
+                np.abs(potVecMat[nzInds[1],:]-potVecMat[nzInds[0],:])/(len(sources)*len(targets)),
+                axis=1
+            ),
+             nzInds),
+            shape=Amat.shape
+        ).todense())
+        if verbose:
+            t2=time.time()
+            print('total betweenness calculation time:',t2-t1)
+        return(btw2)
+    
+    
+def e_btw_from_Linv_legacy(Linv,Amat,sources,targets,verbose=False,verboseLevel=0,
                     useProgressBar=True,pbarFun=tqdm):
     #This algorithm makes use of the full moore-penrose pseudo-inverse
     #which is generally quite dense. The algorithm will scale quite poorly
@@ -473,8 +513,9 @@ def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0,
     return(eMat)
     
 
-def getBtwMat(mat,sources,targets,verbose=False,verboseLevel=0,
-              useProgressBar=False,pbarFun=tqdm):
+def getBtwMat(mat,sources,targets,
+              verbose=False,verboseLevel=0,
+              useProgressBar=False,pbarFun=tqdm,useLegacyAlgorithm=False):
     #Given a (possibly weighted) network in matrix format (mat)
     #and a set of source and target nodes (sources and targets)
     #return the corresponding network with flow betweenness
@@ -499,7 +540,7 @@ def getBtwMat(mat,sources,targets,verbose=False,verboseLevel=0,
         print("generating flow betweenness scores")
     return(e_btw_from_Linv(Linv,Amat,sources,targets,
                            verbose=verbose,verboseLevel=verboseLevel,
-                           useProgressBar=useProgressBar,
+                           useLegacyAlgorithm=useLegacyAlgorithm,useProgressBar=useProgressBar,
                            pbarFun=pbarFun))
     
     
