@@ -417,7 +417,7 @@ def e_btw_from_Linv(Linv,Amat,sources,targets,verbose=False,verboseLevel=0,
         
         nzInds=np.nonzero(Amat)
         btw2=np.array(sp.sparse.coo_matrix(
-            (Amat[nzInds]*np.sum(
+            (np.array(Amat)[nzInds]*np.sum(
                 np.abs(potVecMat[nzInds[1],:]-potVecMat[nzInds[0],:])/(len(sources)*len(targets)),
                 axis=1
             ),
