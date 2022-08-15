@@ -1,11 +1,13 @@
 This repository contains scripts to compute current flow betweenness
 on a weighted undirected network between a pair of given disjoint
 node subsets (source and sink).
+
 There are two versions available, one for R and one for python.
 	-R version: R_version/correlation_network_analysis_functions.r
 	-python version: python_version/correlation_data_utilities.py
 Currently the R version is being phased out in favor of a lightweight
 python version.
+
 The python version tutorial can be found at https://current-flow-allostery.readthedocs.io/en/latest/
 Completed:
 -Computing flow betweenness on a weighted network matrix
@@ -18,6 +20,7 @@ Completed:
 	python_version/trajectoryData
 In progress:
 -Suboptimal network analysis
+
 
 Please direct any questions, comments, etc. to either:
 -Dr. Wesley Botello-Smith ( wmsmith@uci.edu )
