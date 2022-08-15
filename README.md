@@ -6,7 +6,7 @@ There are two versions available, one for R and one for python.
 	-python version: python_version/correlation_data_utilities.py
 Currently the R version is being phased out in favor of a lightweight
 python version.
-The python version tutorial is under construction.
+The python version tutorial can be found at https://current-flow-allostery.readthedocs.io/en/latest/
 Completed:
 -Computing flow betweenness on a weighted network matrix
 	python_version/flow_betweenness
@@ -22,3 +22,4 @@ In progress:
 Please direct any questions, comments, etc. to either:
 -Dr. Wesley Botello-Smith ( wmsmith@uci.edu )
 -Dr. Lyna Luo ( luoy@westernu.edu )
+
